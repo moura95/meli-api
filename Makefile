@@ -18,6 +18,9 @@ up:
 	docker-compose up -d
 	make migrate-up
 
+sqlc:
+	rm -rf internal/repository
+	sqlc generate
 
 run:
 	go run cmd/main.go
@@ -41,4 +44,4 @@ test:
 	go test -v ./...
 
 
-.PHONY: migrate-up migrate-down migrate-create down up sqlc start run restart swag test
+.PHONY: migrate-up migrate-down migrate-create down up sqlc start run restart swag test sqlc

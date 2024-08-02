@@ -7,6 +7,7 @@ import (
 	"github/moura95/meli-api/config"
 	"github/moura95/meli-api/db"
 	server "github/moura95/meli-api/internal"
+	"github/moura95/meli-api/internal/repository"
 	"go.uber.org/zap"
 )
 
@@ -23,8 +24,8 @@ func main() {
 		panic(err)
 	}
 	log.Print("connection is repository establish")
-	store := conn.DB()
 
+	store := repository.New(conn.DB())
 	// Zap Logger
 	logger, _ := zap.NewProduction()
 	defer logger.Sync()

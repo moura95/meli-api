@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jmoiron/sqlx"
 	"github/moura95/meli-api/config"
 	"github/moura95/meli-api/internal/api"
 	"github/moura95/meli-api/internal/middleware"
@@ -13,16 +12,16 @@ import (
 )
 
 type Server struct {
-	store  *sqlx.DB
+	store  *repository.Querier
 	router *gin.Engine
 	config *config.Config
 	logger *zap.SugaredLogger
 }
 
-func NewServer(cfg config.Config, store *sqlx.DB, log *zap.SugaredLogger) *Server {
+func NewServer(cfg config.Config, store repository.Querier, log *zap.SugaredLogger) *Server {
 
 	server := &Server{
-		store:  store,
+		store:  &store,
 		config: &cfg,
 		logger: log,
 	}
@@ -41,7 +40,7 @@ func NewServer(cfg config.Config, store *sqlx.DB, log *zap.SugaredLogger) *Serve
 	router.Use(middleware.CORSMiddleware())
 
 	// Init all Routers
-	api.CreateRoutesV1(store, server.config, router, log)
+	createRoutesV1(&store, server.config, router, log)
 
 	server.router = router
 	return server
