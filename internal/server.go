@@ -4,25 +4,26 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jmoiron/sqlx"
 	"github/moura95/meli-api/config"
 	"github/moura95/meli-api/internal/api"
 	"github/moura95/meli-api/internal/middleware"
+	"github/moura95/meli-api/internal/repository"
+	"github/moura95/meli-api/internal/service"
 
 	"go.uber.org/zap"
 )
 
 type Server struct {
-	store  *sqlx.DB
+	store  *repository.Querier
 	router *gin.Engine
 	config *config.Config
 	logger *zap.SugaredLogger
 }
 
-func NewServer(cfg config.Config, store *sqlx.DB, log *zap.SugaredLogger) *Server {
+func NewServer(cfg config.Config, store repository.Querier, log *zap.SugaredLogger) *Server {
 
 	server := &Server{
-		store:  store,
+		store:  &store,
 		config: &cfg,
 		logger: log,
 	}
@@ -41,17 +42,25 @@ func NewServer(cfg config.Config, store *sqlx.DB, log *zap.SugaredLogger) *Serve
 	router.Use(middleware.CORSMiddleware())
 
 	// Init all Routers
-	api.CreateRoutesV1(store, server.config, router, log)
+	createRoutesV1(&store, server.config, router, log)
 
 	server.router = router
 	return server
+}
+
+func createRoutesV1(store *repository.Querier, cfg *config.Config, router *gin.Engine, log *zap.SugaredLogger) {
+	routes := router.Group("/")
+	// Instance Ticket Service
+	ticketService := service.NewTicketService(*store, *cfg, log)
+	api.NewTicketRouter(*ticketService, log).SetupTicketRoute(routes)
+
 }
 
 func (s *Server) Start(address string) error {
 	return s.router.Run(address)
 }
 
-func RunGinServer(cfg config.Config, store *sqlx.DB, log *zap.SugaredLogger) {
+func RunGinServer(cfg config.Config, store repository.Querier, log *zap.SugaredLogger) {
 	server := NewServer(cfg, store, log)
 
 	_ = server.Start(cfg.HTTPServerAddress)
