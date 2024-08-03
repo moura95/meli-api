@@ -1,3 +1,3 @@
-DROP TABLE tickets
-DROP TABLE severities
-DROP INDEX idx_status
+DROP TABLE tickets;
+-- DROP TABLE severities_levels
+DROP INDEX idx_status;
