@@ -1,12 +1,12 @@
 SET TIME ZONE 'America/Sao_Paulo';
 
 
-CREATE TABLE severities_level (
+CREATE TABLE severities_levels (
                             id SERIAL PRIMARY KEY,
                             description VARCHAR(255) NOT NULL
                         );
 
-INSERT INTO severities_level (id,description) VALUES
+INSERT INTO severities_levels (id,description) VALUES
                                                 (1, 'issue high'),
                                                 (2, 'high'),
                                                 (3, 'medium'),
@@ -21,7 +21,7 @@ CREATE TABLE tickets (
                          created_at  TIMESTAMP    NOT NULL DEFAULT NOW(),
                          updated_at TIMESTAMP    NOT NULL DEFAULT NOW(),
                          completed_at TIMESTAMP,
-                         FOREIGN KEY (severity_id) REFERENCES severities_level(id));
+                         FOREIGN KEY (severity_id) REFERENCES severities_levels(id));
 
 
 
