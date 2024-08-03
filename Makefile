@@ -16,6 +16,7 @@ down:
 
 up:
 	docker-compose up -d
+	sleep 5
 	make migrate-up
 
 sqlc:
