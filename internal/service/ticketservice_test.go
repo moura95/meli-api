@@ -26,6 +26,7 @@ func setupPostgresContainer() (func(), error) {
 	container, err := postgres.RunContainer(ctx,
 		testcontainers.WithImage("postgres:15.3-alpine"),
 		postgres.WithInitScripts(filepath.Join("../..", "db/migrations", "000001_init_schema.up.sql")),
+		postgres.WithInitScripts(filepath.Join("../..", "db/migrations", "000002_seed-categories.up.sql")),
 		postgres.WithDatabase("meli-test-db"),
 		postgres.WithUsername("postgres"),
 		postgres.WithPassword("postgres"),
@@ -68,9 +69,11 @@ func NewTicketServiceTest(repo repository.Querier) *TicketService {
 }
 
 type createRequest struct {
-	Title       string `json:"title"`
-	Description string `json:"description"`
-	SeverityId  int32  `json:"severity_id"`
+	Title         string `json:"title"`
+	Description   string `json:"description"`
+	SeverityId    int32  `json:"severity_id"`
+	CategoryId    int32  `json:"category_id"`
+	SubCategoryId int32  `json:"subcategory_id"`
 }
 
 func TestCreateTicket(t *testing.T) {
@@ -83,9 +86,10 @@ func TestCreateTicket(t *testing.T) {
 		Title:       "Install Docker",
 		Description: "I need Install docker for work",
 		SeverityId:  1,
+		CategoryId:  1,
 	}
 
-	ti, err := service.Create(ctx, req.Title, req.Description, req.SeverityId)
+	ti, err := service.Create(ctx, req.Title, req.Description, req.SeverityId, req.CategoryId, req.SubCategoryId)
 	assert.NoError(t, err)
 
 	ticket, _ := service.GetByID(ctx, ti.ID)
@@ -109,15 +113,17 @@ func TestCreateTicket1(t *testing.T) {
 		Title:       "Install Vpn",
 		Description: "I need install vpn for connect database",
 		SeverityId:  2,
+		CategoryId:  2,
 	}
 
-	ti, err := service.Create(ctx, req.Title, req.Description, req.SeverityId)
+	ti, err := service.Create(ctx, req.Title, req.Description, req.SeverityId, req.CategoryId, req.SubCategoryId)
 	assert.NoError(t, err)
 
 	ticket, _ := service.GetByID(ctx, ti.ID)
 	assert.Equal(t, "Install Vpn", ticket.Title)
 	assert.Equal(t, "I need install vpn for connect database", ticket.Description)
 	assert.Equal(t, int32(2), ticket.SeverityID)
+	assert.Equal(t, int32(2), ticket.CategoryID)
 	assert.Equal(t, "OPEN", ticket.Status)
 
 	assert.NoError(t, err)
@@ -137,6 +143,7 @@ func TestGetTicket(t *testing.T) {
 	assert.Equal(t, "Install Vpn", ticket.Title)
 	assert.Equal(t, "I need install vpn for connect database", ticket.Description)
 	assert.Equal(t, int32(2), ticket.SeverityID)
+	assert.Equal(t, int32(2), ticket.CategoryID)
 	assert.Equal(t, "OPEN", ticket.Status)
 
 }
@@ -162,6 +169,7 @@ func TestList(t *testing.T) {
 	assert.Equal(t, "Install Vpn", tickets[1].Title)
 	assert.Equal(t, "I need install vpn for connect database", tickets[1].Description)
 	assert.Equal(t, int32(2), tickets[1].SeverityID)
+	assert.Equal(t, int32(2), tickets[1].CategoryID)
 	assert.Equal(t, "OPEN", tickets[1].Status)
 }
 
