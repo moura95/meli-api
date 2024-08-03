@@ -19,27 +19,33 @@ type listRequest struct {
 }
 
 type createRequest struct {
-	Title       string `json:"title"`
-	Description string `json:"description"`
-	SeverityId  int32  `json:"severity_id"`
+	Title         string `json:"title"`
+	Description   string `json:"description"`
+	SeverityId    int32  `json:"severity_id"`
+	CategoryId    int32  `json:"category_id"`
+	SubCategoryId int32  `json:"subcategory_id"`
 }
 
 type updateRequest struct {
-	Title       string `json:"title"`
-	Description string `json:"description"`
-	Status      string `json:"status"`
-	SeverityId  int32  `json:"severity_id"`
+	Title         string `json:"title"`
+	Description   string `json:"description"`
+	Status        string `json:"status"`
+	SeverityId    int32  `json:"severity_id"`
+	CategoryId    int32  `json:"category_id"`
+	SubCategoryId int32  `json:"subcategory_id"`
 }
 
 type ticketResponse struct {
-	Id          int32      `json:"id"`
-	Title       string     `json:"title"`
-	Description string     `json:"description"`
-	Status      string     `json:"status"`
-	SeverityId  int32      `json:"severity_id"`
-	CreatedAt   time.Time  `json:"created_at"`
-	UpdatedAt   time.Time  `json:"updated_at"`
-	CompletedAt *time.Time `json:"completed_at"`
+	Id            int32      `json:"id"`
+	Title         string     `json:"title"`
+	Description   string     `json:"description"`
+	Status        string     `json:"status"`
+	SeverityId    int32      `json:"severity_id"`
+	CategoryId    int32      `json:"category_id"`
+	SubCategoryId *int32     `json:"subcategory_id"`
+	CreatedAt     time.Time  `json:"created_at"`
+	UpdatedAt     time.Time  `json:"updated_at"`
+	CompletedAt   *time.Time `json:"completed_at"`
 }
 
 func (t *TicketRouter) list(c *gin.Context) {
@@ -65,15 +71,22 @@ func (t *TicketRouter) list(c *gin.Context) {
 		if ticket.CompletedAt.Valid {
 			completedAt = &ticket.CompletedAt.Time
 		}
+
+		var subCategory *int32
+		if ticket.SubcategoryID.Valid {
+			subCategory = &ticket.SubcategoryID.Int32
+		}
 		response = append(response, ticketResponse{
-			Id:          ticket.ID,
-			Title:       ticket.Title,
-			Description: ticket.Description,
-			Status:      ticket.Status,
-			SeverityId:  ticket.SeverityID,
-			CreatedAt:   ticket.CreatedAt,
-			UpdatedAt:   ticket.UpdatedAt,
-			CompletedAt: completedAt,
+			Id:            ticket.ID,
+			Title:         ticket.Title,
+			Description:   ticket.Description,
+			Status:        ticket.Status,
+			SeverityId:    ticket.SeverityID,
+			CategoryId:    ticket.CategoryID,
+			SubCategoryId: subCategory,
+			CreatedAt:     ticket.CreatedAt,
+			UpdatedAt:     ticket.UpdatedAt,
+			CompletedAt:   completedAt,
 		})
 
 	}
@@ -105,15 +118,22 @@ func (t *TicketRouter) get(ctx *gin.Context) {
 		completedAt = &ticket.CompletedAt.Time
 	}
 
+	var subCategory *int32
+	if ticket.SubcategoryID.Valid {
+		subCategory = &ticket.SubcategoryID.Int32
+	}
+
 	response := ticketResponse{
-		Id:          ticket.ID,
-		Title:       ticket.Title,
-		Description: ticket.Description,
-		Status:      ticket.Status,
-		SeverityId:  ticket.SeverityID,
-		CreatedAt:   ticket.CreatedAt,
-		UpdatedAt:   ticket.UpdatedAt,
-		CompletedAt: completedAt,
+		Id:            ticket.ID,
+		Title:         ticket.Title,
+		Description:   ticket.Description,
+		Status:        ticket.Status,
+		SeverityId:    ticket.SeverityID,
+		CategoryId:    ticket.CategoryID,
+		SubCategoryId: subCategory,
+		CreatedAt:     ticket.CreatedAt,
+		UpdatedAt:     ticket.UpdatedAt,
+		CompletedAt:   completedAt,
 	}
 
 	ctx.JSON(http.StatusOK, ginx.SuccessResponse(response))
@@ -130,7 +150,7 @@ func (t *TicketRouter) create(ctx *gin.Context) {
 		return
 	}
 
-	ti, err := t.service.Create(ctx, req.Title, req.Description, req.SeverityId)
+	ti, err := t.service.Create(ctx, req.Title, req.Description, req.SeverityId, req.CategoryId, req.SubCategoryId)
 	if err != nil {
 		t.logger.Error(err)
 		ctx.JSON(http.StatusInternalServerError, ginx.ErrorResponse(err.Error()))
@@ -160,7 +180,7 @@ func (t *TicketRouter) update(ctx *gin.Context) {
 		return
 	}
 
-	err = t.service.Update(ctx, int32(id), req.SeverityId, req.Title, req.Description, req.Status)
+	err = t.service.Update(ctx, int32(id), req.SeverityId, req.CategoryId, req.SubCategoryId, req.Title, req.Description, req.Status)
 	if err != nil {
 		t.logger.Error(err)
 		ctx.JSON(http.StatusInternalServerError, ginx.ErrorResponse(err.Error()))
