@@ -24,13 +24,13 @@ jobs:
 
       - name: Push to Container Registry
         run: |-
-          docker push gcr.io/moura-366701/meli-challenge-api
+          docker push gcr.io/moura-366701/meli-api
 
       - name: Deploy to Cloud Run
         id: deploy
         uses: google-github-actions/deploy-cloudrun@main
         with:
           service: meli-api
-          image: gcr.io/moura-366701/meli-challenge-api
+          image: gcr.io/moura-366701/meli-api
           project_id: moura-366701
           credentials: ${{ secrets.SERVICE_ACCOUNT_KEYS }}
