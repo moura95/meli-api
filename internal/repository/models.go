@@ -31,4 +31,5 @@ type Ticket struct {
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
 	CompletedAt   sql.NullTime
+	UserID        sql.NullInt32
 }

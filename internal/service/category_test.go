@@ -20,6 +20,49 @@ type createCategoryRequest struct {
 	ParentId int32  `json:"parent_id"`
 }
 
+func TestGetCategory(t *testing.T) {
+	ctx := context.Background()
+	conn, err := db.ConnectPostgres(connStr)
+	store := repository.New(conn.DB())
+
+	service := NewCategoryServiceTest(store)
+
+	category, err := service.GetByID(ctx, 1)
+
+	assert.NoError(t, err)
+	assert.Equal(t, "Hardware", category.Name)
+
+}
+
+func TestListCategories(t *testing.T) {
+	ctx := context.Background()
+	conn, err := db.ConnectPostgres(connStr)
+	store := repository.New(conn.DB())
+
+	service := NewCategoryServiceTest(store)
+
+	categories, err := service.GetAll(ctx, "")
+
+	assert.NoError(t, err)
+	assert.Equal(t, len(categories), 12)
+	assert.Equal(t, "Hardware", categories[0].Name)
+
+}
+
+func TestListSubCategories(t *testing.T) {
+	ctx := context.Background()
+	conn, err := db.ConnectPostgres(connStr)
+	store := repository.New(conn.DB())
+
+	service := NewCategoryServiceTest(store)
+
+	categories, err := service.GetAll(ctx, "1")
+
+	assert.NoError(t, err)
+	assert.Equal(t, len(categories), 3)
+	assert.Equal(t, "Laptops", categories[0].Name)
+
+}
 func TestCreateCategory(t *testing.T) {
 	ctx := context.Background()
 	conn, err := db.ConnectPostgres(connStr)
@@ -60,50 +103,6 @@ func TestCreateSubCategory(t *testing.T) {
 	assert.Equal(t, int32(1), category.ParentID.Int32)
 
 	assert.NoError(t, err)
-
-}
-
-func TestGetCategory(t *testing.T) {
-	ctx := context.Background()
-	conn, err := db.ConnectPostgres(connStr)
-	store := repository.New(conn.DB())
-
-	service := NewCategoryServiceTest(store)
-
-	category, err := service.GetByID(ctx, 1)
-
-	assert.NoError(t, err)
-	assert.Equal(t, "Hardware", category.Name)
-
-}
-
-func TestListCategories(t *testing.T) {
-	ctx := context.Background()
-	conn, err := db.ConnectPostgres(connStr)
-	store := repository.New(conn.DB())
-
-	service := NewCategoryServiceTest(store)
-
-	categories, err := service.GetAll(ctx, "")
-
-	assert.NoError(t, err)
-	assert.Equal(t, len(categories), 14)
-	assert.Equal(t, "Hardware", categories[0].Name)
-
-}
-
-func TestListSubCategories(t *testing.T) {
-	ctx := context.Background()
-	conn, err := db.ConnectPostgres(connStr)
-	store := repository.New(conn.DB())
-
-	service := NewCategoryServiceTest(store)
-
-	categories, err := service.GetAll(ctx, "1")
-
-	assert.NoError(t, err)
-	assert.Equal(t, len(categories), 4)
-	assert.Equal(t, "Laptops", categories[0].Name)
 
 }
 
