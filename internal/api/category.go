@@ -80,6 +80,7 @@ func (t *CategoryRouter) get(ctx *gin.Context) {
 func (t *CategoryRouter) create(ctx *gin.Context) {
 	var req createCategoryRequest
 	t.logger.Info("Create Category")
+	// force actions
 
 	err := ginx.ParseJSON(ctx, &req)
 	if err != nil {
