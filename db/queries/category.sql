@@ -8,10 +8,10 @@ RETURNING *;
 DELETE FROM categories
 WHERE id = $1;
 
--- name: GetCategoryById :one
+-- name: GetCategoryById :many
 SELECT *
 FROM categories
-WHERE id = $1;
+WHERE categories.id = $1;
 
 -- name: ListCategories :many
 SELECT id, name, parent_id
