@@ -26,6 +26,7 @@ func setupPostgresContainer() (func(), error) {
 	container, err := postgres.RunContainer(ctx,
 		testcontainers.WithImage("postgres:15.3-alpine"),
 		postgres.WithInitScripts(filepath.Join("../..", "db/migrations", "000001_init_schema.up.sql")),
+		postgres.WithInitScripts(filepath.Join("../..", "db/migrations", "000002_seed-categories.up.sql")),
 		postgres.WithDatabase("meli-test-db"),
 		postgres.WithUsername("postgres"),
 		postgres.WithPassword("postgres"),
@@ -73,6 +74,7 @@ func TestTicketRepository_Create_SeverityHigh(t *testing.T) {
 		Title:       "Login Fails with Correct Credentials",
 		Description: "Users can't log in despite correct credentials",
 		SeverityID:  1,
+		CategoryID:  1,
 	}
 
 	ticket, err := store.CreateTicket(ctx, arg)
@@ -81,6 +83,7 @@ func TestTicketRepository_Create_SeverityHigh(t *testing.T) {
 	assert.Equal(t, "Login Fails with Correct Credentials", ticket.Title)
 	assert.Equal(t, "Users can't log in despite correct credentials", ticket.Description)
 	assert.Equal(t, "OPEN", ticket.Status)
+	assert.Equal(t, int32(1), ticket.CategoryID)
 
 }
 
@@ -96,6 +99,7 @@ func TestTicketRepository_Create_SeverityMedium(t *testing.T) {
 		Title:       "Submit Button Not Working on Contact Page",
 		Description: "Submit button is unresponsive on contact form",
 		SeverityID:  2,
+		CategoryID:  2,
 	}
 
 	ticket, err := store.CreateTicket(ctx, arg)
@@ -104,6 +108,7 @@ func TestTicketRepository_Create_SeverityMedium(t *testing.T) {
 	assert.Equal(t, "Submit Button Not Working on Contact Page", ticket.Title)
 	assert.Equal(t, "Submit button is unresponsive on contact form", ticket.Description)
 	assert.Equal(t, "OPEN", ticket.Status)
+	assert.Equal(t, int32(2), ticket.CategoryID)
 
 }
 
@@ -160,12 +165,15 @@ func TestTicketRepository_GetAll(t *testing.T) {
 	assert.Equal(t, "Users can't log in despite correct credentials", tickets[0].Description)
 	assert.Equal(t, "OPEN", tickets[0].Status)
 	assert.Equal(t, int32(1), tickets[0].SeverityID)
+	assert.Equal(t, int32(1), tickets[0].CategoryID)
 
 	// ticket 2
 	assert.Equal(t, "Submit Button Not Working on Contact Page", tickets[1].Title)
 	assert.Equal(t, "Submit button is unresponsive on contact form", tickets[1].Description)
 	assert.Equal(t, "OPEN", tickets[1].Status)
 	assert.Equal(t, int32(2), tickets[1].SeverityID)
+	assert.Equal(t, int32(2), tickets[1].CategoryID)
+
 }
 
 func TestTicketRepository_UpdateTitleTicket(t *testing.T) {

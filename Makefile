@@ -16,10 +16,10 @@ down:
 
 up:
 	docker-compose up -d
+	sleep 5
 	make migrate-up
 
 sqlc:
-	rm -rf internal/repository
 	sqlc generate
 
 run:
