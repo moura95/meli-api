@@ -27,6 +27,7 @@ func setupPostgresContainer() (func(), error) {
 		testcontainers.WithImage("postgres:15.3-alpine"),
 		postgres.WithInitScripts(filepath.Join("../..", "db/migrations", "000001_init_schema.up.sql")),
 		postgres.WithInitScripts(filepath.Join("../..", "db/migrations", "000002_seed-categories.up.sql")),
+		postgres.WithInitScripts(filepath.Join("../..", "db/migrations", "000004_add_column_user.up.sql")),
 		postgres.WithDatabase("meli-test-db"),
 		postgres.WithUsername("postgres"),
 		postgres.WithPassword("postgres"),
@@ -74,7 +75,7 @@ func TestTicketRepository_Create_SeverityHigh(t *testing.T) {
 		Title:       "Login Fails with Correct Credentials",
 		Description: "Users can't log in despite correct credentials",
 		SeverityID:  1,
-		CategoryID:  1,
+		CategoryID:  3,
 	}
 
 	ticket, err := store.CreateTicket(ctx, arg)
@@ -83,7 +84,7 @@ func TestTicketRepository_Create_SeverityHigh(t *testing.T) {
 	assert.Equal(t, "Login Fails with Correct Credentials", ticket.Title)
 	assert.Equal(t, "Users can't log in despite correct credentials", ticket.Description)
 	assert.Equal(t, "OPEN", ticket.Status)
-	assert.Equal(t, int32(1), ticket.CategoryID)
+	assert.Equal(t, int32(3), ticket.CategoryID)
 
 }
 
@@ -165,7 +166,7 @@ func TestTicketRepository_GetAll(t *testing.T) {
 	assert.Equal(t, "Users can't log in despite correct credentials", tickets[0].Description)
 	assert.Equal(t, "OPEN", tickets[0].Status)
 	assert.Equal(t, int32(1), tickets[0].SeverityID)
-	assert.Equal(t, int32(1), tickets[0].CategoryID)
+	assert.Equal(t, int32(3), tickets[0].CategoryID)
 
 	// ticket 2
 	assert.Equal(t, "Submit Button Not Working on Contact Page", tickets[1].Title)

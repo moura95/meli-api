@@ -58,6 +58,9 @@ func createRoutesV1(store *repository.Querier, cfg *config.Config, router *gin.E
 	categoryService := service.NewCategoryService(*store, *cfg, log)
 	api.NewCategoryRouter(*categoryService, log).SetupCategoryRoute(routes)
 
+	// User Route
+	api.NewUserRouter(log).SetupUserRoute(routes)
+
 }
 
 func (s *Server) Start(address string) error {
