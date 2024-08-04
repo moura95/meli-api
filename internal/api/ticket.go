@@ -21,10 +21,10 @@ type listTicketRequest struct {
 }
 
 type createTicketRequest struct {
-	Title         string `json:"title"`
-	Description   string `json:"description"`
-	SeverityId    int32  `json:"severity_id"`
-	CategoryId    int32  `json:"category_id"`
+	Title         string `json:"title" validate:"required"`
+	Description   string `json:"description" validate:"required"`
+	SeverityId    int32  `json:"severity_id" validate:"gte=1,lte=4"`
+	CategoryId    int32  `json:"category_id" validate:"required"`
 	SubCategoryId int32  `json:"subcategory_id"`
 }
 
@@ -55,6 +55,20 @@ type ticketResponse struct {
 	CompletedAt   *time.Time            `json:"completed_at"`
 }
 
+type listTicketResponse struct {
+	Id            int32      `json:"id"`
+	Title         string     `json:"title"`
+	Description   string     `json:"description"`
+	Status        string     `json:"status"`
+	SeverityId    int32      `json:"severity_id"`
+	CategoryId    int32      `json:"category_id"`
+	UserID        int32      `json:"user_id"`
+	SubCategoryId *int32     `json:"subcategory_id"`
+	CreatedAt     time.Time  `json:"created_at"`
+	UpdatedAt     time.Time  `json:"updated_at"`
+	CompletedAt   *time.Time `json:"completed_at"`
+}
+
 func (t *TicketRouter) list(c *gin.Context) {
 	t.logger.Info("List All Tickets")
 
@@ -72,7 +86,7 @@ func (t *TicketRouter) list(c *gin.Context) {
 		return
 	}
 
-	var response []ticketResponse
+	var response []listTicketResponse
 	for _, ticket := range tickets {
 		var completedAt *time.Time
 		if ticket.CompletedAt.Valid {
@@ -84,13 +98,14 @@ func (t *TicketRouter) list(c *gin.Context) {
 			subCategory = &ticket.SubcategoryID.Int32
 		}
 
-		response = append(response, ticketResponse{
+		response = append(response, listTicketResponse{
 			Id:            ticket.ID,
 			Title:         ticket.Title,
 			Description:   ticket.Description,
 			Status:        ticket.Status,
 			SeverityId:    ticket.SeverityID,
 			CategoryId:    ticket.CategoryID,
+			UserID:        *util.NullInt32ToPtr(ticket.UserID),
 			SubCategoryId: subCategory,
 			CreatedAt:     ticket.CreatedAt,
 			UpdatedAt:     ticket.UpdatedAt,
@@ -162,6 +177,17 @@ func (t *TicketRouter) create(ctx *gin.Context) {
 	if err != nil {
 		t.logger.Info("Bad Request %s", err)
 		ctx.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	if req.SeverityId == 1 {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Bad Request: You can't create ticket with severity issue high(1)"})
+		return
+	}
+
+	// Validate  struct
+	if err = t.validate.Struct(req); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
