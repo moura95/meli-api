@@ -101,7 +101,7 @@ func (s *TicketService) Update(ctx context.Context, id, severityId, categoryId, 
 	}
 	err := s.repository.UpdateTicket(ctx, arg)
 	if err != nil {
-		return fmt.Errorf("failed to create %s", err.Error())
+		return fmt.Errorf("failed to update %s", err.Error())
 	}
 	return nil
 }

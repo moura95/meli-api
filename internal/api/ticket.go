@@ -10,7 +10,7 @@ import (
 	"github/moura95/meli-api/pkg/ginx"
 )
 
-type listRequest struct {
+type listTicketRequest struct {
 	Status     string `form:"status"`
 	Title      string `form:"name"`
 	SeverityId int32  `form:"severity_id"`
@@ -18,7 +18,7 @@ type listRequest struct {
 	Page       int32  `form:"page"`
 }
 
-type createRequest struct {
+type createTicketRequest struct {
 	Title         string `json:"title"`
 	Description   string `json:"description"`
 	SeverityId    int32  `json:"severity_id"`
@@ -26,7 +26,7 @@ type createRequest struct {
 	SubCategoryId int32  `json:"subcategory_id"`
 }
 
-type updateRequest struct {
+type updateTicketRequest struct {
 	Title         string `json:"title"`
 	Description   string `json:"description"`
 	Status        string `json:"status"`
@@ -51,7 +51,7 @@ type ticketResponse struct {
 func (t *TicketRouter) list(c *gin.Context) {
 	t.logger.Info("List All Tickets")
 
-	var filters listRequest
+	var filters listTicketRequest
 	err := ginx.ParseQuery(c, &filters)
 	if err != nil {
 		t.logger.Error(err)
@@ -140,7 +140,7 @@ func (t *TicketRouter) get(ctx *gin.Context) {
 }
 
 func (t *TicketRouter) create(ctx *gin.Context) {
-	var req createRequest
+	var req createTicketRequest
 	t.logger.Info("Create Ticket")
 
 	err := ginx.ParseJSON(ctx, &req)
@@ -162,7 +162,7 @@ func (t *TicketRouter) create(ctx *gin.Context) {
 }
 
 func (t *TicketRouter) update(ctx *gin.Context) {
-	var req updateRequest
+	var req updateTicketRequest
 
 	err := ginx.ParseJSON(ctx, &req)
 	if err != nil {

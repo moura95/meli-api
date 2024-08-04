@@ -20,7 +20,6 @@ up:
 	make migrate-up
 
 sqlc:
-	rm -rf internal/repository
 	sqlc generate
 
 run:
