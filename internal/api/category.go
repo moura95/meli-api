@@ -1,12 +1,12 @@
 package api
 
 import (
-	"database/sql"
 	"fmt"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github/moura95/meli-api/internal/util"
 	"github/moura95/meli-api/pkg/errors"
 	"github/moura95/meli-api/pkg/ginx"
 )
@@ -43,7 +43,7 @@ func (t *CategoryRouter) list(c *gin.Context) {
 		resp = append(resp, categoryResponse{
 			Id:       cate.ID,
 			Name:     cate.Name,
-			ParentId: nullInt32ToPtr(cate.ParentID)})
+			ParentId: util.NullInt32ToPtr(cate.ParentID)})
 	}
 
 	c.JSON(http.StatusOK, ginx.SuccessResponseWithPageInfo(resp, ginx.PageInfo{}))
@@ -72,7 +72,7 @@ func (t *CategoryRouter) get(ctx *gin.Context) {
 	response := categoryResponse{
 		Id:       category.ID,
 		Name:     category.Name,
-		ParentId: nullInt32ToPtr(category.ParentID)}
+		ParentId: util.NullInt32ToPtr(category.ParentID)}
 
 	ctx.JSON(http.StatusOK, ginx.SuccessResponse(response))
 }
@@ -148,11 +148,4 @@ func (t *CategoryRouter) hardDelete(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, ginx.SuccessResponse("Ok"))
-}
-
-func nullInt32ToPtr(n sql.NullInt32) *int32 {
-	if n.Valid {
-		return &n.Int32
-	}
-	return nil
 }
