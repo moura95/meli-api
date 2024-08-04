@@ -2,6 +2,7 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"github/moura95/meli-api/internal/service"
 	"go.uber.org/zap"
 )
@@ -11,14 +12,16 @@ type ITicket interface {
 }
 
 type TicketRouter struct {
-	service service.TicketService
-	logger  *zap.SugaredLogger
+	service  service.TicketService
+	logger   *zap.SugaredLogger
+	validate validator.Validate
 }
 
 func NewTicketRouter(s service.TicketService, log *zap.SugaredLogger) *TicketRouter {
 	return &TicketRouter{
-		service: s,
-		logger:  log,
+		service:  s,
+		logger:   log,
+		validate: *validator.New(),
 	}
 }
 

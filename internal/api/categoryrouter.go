@@ -2,6 +2,7 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"github/moura95/meli-api/internal/service"
 	"go.uber.org/zap"
 )
@@ -11,14 +12,16 @@ type ICategory interface {
 }
 
 type CategoryRouter struct {
-	service service.CategoryService
-	logger  *zap.SugaredLogger
+	service  service.CategoryService
+	logger   *zap.SugaredLogger
+	validate validator.Validate
 }
 
 func NewCategoryRouter(s service.CategoryService, log *zap.SugaredLogger) *CategoryRouter {
 	return &CategoryRouter{
-		service: s,
-		logger:  log,
+		service:  s,
+		logger:   log,
+		validate: *validator.New(),
 	}
 }
 
