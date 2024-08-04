@@ -16,7 +16,7 @@ CREATE TABLE categories (
                             id SERIAL PRIMARY KEY,
                             name VARCHAR(255) NOT NULL,
                             parent_id INT,
-                            FOREIGN KEY (parent_id) REFERENCES categories(id)
+                            FOREIGN KEY (parent_id) REFERENCES categories(id) ON DELETE CASCADE
 );
 
 CREATE TABLE tickets (
