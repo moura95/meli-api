@@ -12,7 +12,7 @@ import (
 )
 
 type createCategoryRequest struct {
-	Name     string `json:"name"`
+	Name     string `json:"name" validate:"required"`
 	ParentId int32  `json:"parent_id"`
 }
 
@@ -85,6 +85,12 @@ func (t *CategoryRouter) create(ctx *gin.Context) {
 	if err != nil {
 		t.logger.Info("Bad Request %s", err)
 		ctx.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	// Validate
+	if err = t.validate.Struct(req); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
