@@ -70,9 +70,9 @@ func (t *CategoryRouter) get(ctx *gin.Context) {
 	}
 
 	response := categoryResponse{
-		Id:       category[0].ID,
-		Name:     category[0].Name,
-		ParentId: nullInt32ToPtr(category[0].ParentID)}
+		Id:       category.ID,
+		Name:     category.Name,
+		ParentId: nullInt32ToPtr(category.ParentID)}
 
 	ctx.JSON(http.StatusOK, ginx.SuccessResponse(response))
 }

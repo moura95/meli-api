@@ -47,14 +47,14 @@ func (s *CategoryService) GetAll(ctx context.Context, parentId string) (categori
 	return categories, nil
 }
 
-func (s *CategoryService) GetByID(ctx context.Context, id int32) ([]repository.Category, error) {
+func (s *CategoryService) GetByID(ctx context.Context, id int32) (*repository.Category, error) {
 	category, err := s.repository.GetCategoryById(ctx, id)
 
 	if err != nil {
 		return nil, fmt.Errorf("failed to get category %s", err.Error())
 	}
 
-	return category, nil
+	return &category, nil
 }
 
 func (s *CategoryService) Create(ctx context.Context, name string, parentId int32) (*repository.Category, error) {
