@@ -27,6 +27,7 @@ func setupPostgresContainer() (func(), error) {
 		testcontainers.WithImage("postgres:15.3-alpine"),
 		postgres.WithInitScripts(filepath.Join("../..", "db/migrations", "000001_init_schema.up.sql")),
 		postgres.WithInitScripts(filepath.Join("../..", "db/migrations", "000002_seed-categories.up.sql")),
+		postgres.WithInitScripts(filepath.Join("../..", "db/migrations", "000004_add_column_user.up.sql")),
 		postgres.WithDatabase("meli-test-db"),
 		postgres.WithUsername("postgres"),
 		postgres.WithPassword("postgres"),
@@ -86,7 +87,7 @@ func TestCreateTicket(t *testing.T) {
 		Title:       "Install Docker",
 		Description: "I need Install docker for work",
 		SeverityId:  1,
-		CategoryId:  1,
+		CategoryId:  3,
 	}
 
 	ti, err := service.Create(ctx, req.Title, req.Description, req.SeverityId, req.CategoryId, req.SubCategoryId)
