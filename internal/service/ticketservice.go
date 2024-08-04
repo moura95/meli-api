@@ -7,6 +7,7 @@ import (
 
 	"github/moura95/meli-api/config"
 	"github/moura95/meli-api/internal/repository"
+	"github/moura95/meli-api/pkg/jsonplaceholder"
 	"go.uber.org/zap"
 )
 
@@ -26,7 +27,10 @@ func NewTicketService(repo repository.Querier, cfg config.Config, log *zap.Sugar
 
 func (s *TicketService) GetAll(ctx context.Context) ([]repository.Ticket, error) {
 	tickets, err := s.repository.ListTickets(ctx)
-
+	users, _ := jsonplaceholder.ListUsers()
+	user, _ := jsonplaceholder.GetUserByID(1)
+	fmt.Println(users)
+	fmt.Println(user)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get ticket %s", err.Error())
 	}
@@ -34,7 +38,7 @@ func (s *TicketService) GetAll(ctx context.Context) ([]repository.Ticket, error)
 	return tickets, nil
 }
 
-func (s *TicketService) GetByID(ctx context.Context, id int32) (*repository.Ticket, error) {
+func (s *TicketService) GetByID(ctx context.Context, id int32) (*repository.GetTicketByIdRow, error) {
 	ticket, err := s.repository.GetTicketById(ctx, id)
 
 	if err != nil {
@@ -71,7 +75,7 @@ func (s *TicketService) Delete(ctx context.Context, id int32) error {
 	return nil
 }
 
-func (s *TicketService) Update(ctx context.Context, id, severityId, categoryId, subCategoryId int32, title, desc, status string) error {
+func (s *TicketService) Update(ctx context.Context, id, userId, severityId, categoryId, subCategoryId int32, title, desc, status string) error {
 	arg := repository.UpdateTicketParams{
 		ID: id,
 		Title: sql.NullString{
@@ -81,6 +85,10 @@ func (s *TicketService) Update(ctx context.Context, id, severityId, categoryId, 
 		Description: sql.NullString{
 			String: desc,
 			Valid:  desc != "",
+		},
+		UserID: sql.NullInt32{
+			Int32: userId,
+			Valid: userId > 0,
 		},
 		SeverityID: sql.NullInt32{
 			Int32: severityId,

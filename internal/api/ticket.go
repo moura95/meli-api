@@ -6,8 +6,10 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github/moura95/meli-api/internal/util"
 	"github/moura95/meli-api/pkg/errors"
 	"github/moura95/meli-api/pkg/ginx"
+	"github/moura95/meli-api/pkg/jsonplaceholder"
 )
 
 type listTicketRequest struct {
@@ -30,22 +32,27 @@ type updateTicketRequest struct {
 	Title         string `json:"title"`
 	Description   string `json:"description"`
 	Status        string `json:"status"`
+	UserID        int32  `json:"user_id"`
 	SeverityId    int32  `json:"severity_id"`
 	CategoryId    int32  `json:"category_id"`
 	SubCategoryId int32  `json:"subcategory_id"`
 }
 
 type ticketResponse struct {
-	Id            int32      `json:"id"`
-	Title         string     `json:"title"`
-	Description   string     `json:"description"`
-	Status        string     `json:"status"`
-	SeverityId    int32      `json:"severity_id"`
-	CategoryId    int32      `json:"category_id"`
-	SubCategoryId *int32     `json:"subcategory_id"`
-	CreatedAt     time.Time  `json:"created_at"`
-	UpdatedAt     time.Time  `json:"updated_at"`
-	CompletedAt   *time.Time `json:"completed_at"`
+	Id            int32                 `json:"id"`
+	Title         string                `json:"title"`
+	Description   string                `json:"description"`
+	Status        string                `json:"status"`
+	SeverityId    int32                 `json:"severity_id"`
+	CategoryId    int32                 `json:"category_id"`
+	UserID        int32                 `json:"user_id"`
+	SubCategoryId *int32                `json:"subcategory_id"`
+	Category      *categoryResponse     `json:"category"`
+	SubCategory   *categoryResponse     `json:"subcategory"`
+	User          *jsonplaceholder.User `json:"user"`
+	CreatedAt     time.Time             `json:"created_at"`
+	UpdatedAt     time.Time             `json:"updated_at"`
+	CompletedAt   *time.Time            `json:"completed_at"`
 }
 
 func (t *TicketRouter) list(c *gin.Context) {
@@ -76,6 +83,7 @@ func (t *TicketRouter) list(c *gin.Context) {
 		if ticket.SubcategoryID.Valid {
 			subCategory = &ticket.SubcategoryID.Int32
 		}
+
 		response = append(response, ticketResponse{
 			Id:            ticket.ID,
 			Title:         ticket.Title,
@@ -113,16 +121,6 @@ func (t *TicketRouter) get(ctx *gin.Context) {
 		return
 	}
 
-	var completedAt *time.Time
-	if ticket.CompletedAt.Valid {
-		completedAt = &ticket.CompletedAt.Time
-	}
-
-	var subCategory *int32
-	if ticket.SubcategoryID.Valid {
-		subCategory = &ticket.SubcategoryID.Int32
-	}
-
 	response := ticketResponse{
 		Id:            ticket.ID,
 		Title:         ticket.Title,
@@ -130,11 +128,28 @@ func (t *TicketRouter) get(ctx *gin.Context) {
 		Status:        ticket.Status,
 		SeverityId:    ticket.SeverityID,
 		CategoryId:    ticket.CategoryID,
-		SubCategoryId: subCategory,
+		SubCategoryId: util.NullInt32ToPtr(ticket.SubcategoryID),
 		CreatedAt:     ticket.CreatedAt,
 		UpdatedAt:     ticket.UpdatedAt,
-		CompletedAt:   completedAt,
+		CompletedAt:   util.NullDateToPtr(ticket.CompletedAt),
 	}
+
+	// Add Category
+	response.Category = &categoryResponse{
+		Id:   ticket.CategoryID,
+		Name: ticket.CategoryName,
+	}
+	// Add SubCategory
+	response.SubCategory = &categoryResponse{
+		Id:   *util.NullInt32ToPtr(ticket.SubcategoryID),
+		Name: *util.NullStringToPtr(ticket.SubcategoryName),
+	}
+	// Add User
+	user, err := jsonplaceholder.GetUserByID(ticket.UserID.Int32)
+	if err != nil {
+		t.logger.Error(err)
+	}
+	response.User = user
 
 	ctx.JSON(http.StatusOK, ginx.SuccessResponse(response))
 }
@@ -180,7 +195,7 @@ func (t *TicketRouter) update(ctx *gin.Context) {
 		return
 	}
 
-	err = t.service.Update(ctx, int32(id), req.SeverityId, req.CategoryId, req.SubCategoryId, req.Title, req.Description, req.Status)
+	err = t.service.Update(ctx, int32(id), req.UserID, req.SeverityId, req.CategoryId, req.SubCategoryId, req.Title, req.Description, req.Status)
 	if err != nil {
 		t.logger.Error(err)
 		ctx.JSON(http.StatusInternalServerError, ginx.ErrorResponse(err.Error()))
