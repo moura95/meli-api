@@ -15,7 +15,7 @@ type Querier interface {
 	DeleteCategory(ctx context.Context, id int32) error
 	DeleteTicket(ctx context.Context, id int32) error
 	GetCategoryById(ctx context.Context, id int32) (Category, error)
-	GetTicketById(ctx context.Context, id int32) (Ticket, error)
+	GetTicketById(ctx context.Context, id int32) (GetTicketByIdRow, error)
 	ListCategories(ctx context.Context) ([]Category, error)
 	ListSubCategories(ctx context.Context, parentID sql.NullInt32) ([]Category, error)
 	ListTickets(ctx context.Context) ([]Ticket, error)
