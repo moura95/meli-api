@@ -11,19 +11,27 @@ import (
 )
 
 const createTicket = `-- name: CreateTicket :one
-INSERT INTO tickets (title,description,severity_id,status)
-VALUES ($1, $2, $3, 'OPEN')
-RETURNING id, title, status, description, severity_id, created_at, updated_at, completed_at
+INSERT INTO tickets (title,description,severity_id,category_id,subcategory_id,status)
+VALUES ($1, $2, $3, $4, $5, 'OPEN')
+RETURNING id, title, status, description, severity_id, category_id, subcategory_id, created_at, updated_at, completed_at
 `
 
 type CreateTicketParams struct {
-	Title       string
-	Description string
-	SeverityID  int32
+	Title         string
+	Description   string
+	SeverityID    int32
+	CategoryID    int32
+	SubcategoryID sql.NullInt32
 }
 
 func (q *Queries) CreateTicket(ctx context.Context, arg CreateTicketParams) (Ticket, error) {
-	row := q.db.QueryRowContext(ctx, createTicket, arg.Title, arg.Description, arg.SeverityID)
+	row := q.db.QueryRowContext(ctx, createTicket,
+		arg.Title,
+		arg.Description,
+		arg.SeverityID,
+		arg.CategoryID,
+		arg.SubcategoryID,
+	)
 	var i Ticket
 	err := row.Scan(
 		&i.ID,
@@ -31,6 +39,8 @@ func (q *Queries) CreateTicket(ctx context.Context, arg CreateTicketParams) (Tic
 		&i.Status,
 		&i.Description,
 		&i.SeverityID,
+		&i.CategoryID,
+		&i.SubcategoryID,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.CompletedAt,
@@ -49,7 +59,7 @@ func (q *Queries) DeleteTicket(ctx context.Context, id int32) error {
 }
 
 const getTicketById = `-- name: GetTicketById :one
-SELECT id, title, status, description, severity_id, created_at, updated_at, completed_at
+SELECT id, title, status, description, severity_id, category_id, subcategory_id, created_at, updated_at, completed_at
 FROM tickets
 WHERE id = $1
 `
@@ -63,6 +73,8 @@ func (q *Queries) GetTicketById(ctx context.Context, id int32) (Ticket, error) {
 		&i.Status,
 		&i.Description,
 		&i.SeverityID,
+		&i.CategoryID,
+		&i.SubcategoryID,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.CompletedAt,
@@ -71,7 +83,7 @@ func (q *Queries) GetTicketById(ctx context.Context, id int32) (Ticket, error) {
 }
 
 const listTickets = `-- name: ListTickets :many
-SELECT id, title, status, description, severity_id, created_at, updated_at, completed_at
+SELECT id, title, status, description, severity_id, category_id, subcategory_id, created_at, updated_at, completed_at
 FROM tickets
 `
 
@@ -90,6 +102,8 @@ func (q *Queries) ListTickets(ctx context.Context) ([]Ticket, error) {
 			&i.Status,
 			&i.Description,
 			&i.SeverityID,
+			&i.CategoryID,
+			&i.SubcategoryID,
 			&i.CreatedAt,
 			&i.UpdatedAt,
 			&i.CompletedAt,
@@ -112,17 +126,21 @@ UPDATE tickets
 SET title = COALESCE($2, title),
     description  = COALESCE($3, description),
     severity_id      = COALESCE($4, severity_id),
-    status        = COALESCE($5, status),
+    category_id      = COALESCE($5, category_id),
+    subcategory_id      = COALESCE($6, subcategory_id),
+    status        = COALESCE($7, status),
     updated_at = NOW()
 WHERE id = $1
 `
 
 type UpdateTicketParams struct {
-	ID          int32
-	Title       sql.NullString
-	Description sql.NullString
-	SeverityID  sql.NullInt32
-	Status      sql.NullString
+	ID            int32
+	Title         sql.NullString
+	Description   sql.NullString
+	SeverityID    sql.NullInt32
+	CategoryID    sql.NullInt32
+	SubcategoryID sql.NullInt32
+	Status        sql.NullString
 }
 
 func (q *Queries) UpdateTicket(ctx context.Context, arg UpdateTicketParams) error {
@@ -131,6 +149,8 @@ func (q *Queries) UpdateTicket(ctx context.Context, arg UpdateTicketParams) erro
 		arg.Title,
 		arg.Description,
 		arg.SeverityID,
+		arg.CategoryID,
+		arg.SubcategoryID,
 		arg.Status,
 	)
 	return err

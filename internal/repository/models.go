@@ -9,19 +9,26 @@ import (
 	"time"
 )
 
-type Severity struct {
+type Category struct {
+	ID       int32
+	Name     string
+	ParentID sql.NullInt32
+}
+
+type SeveritiesLevel struct {
 	ID          int32
-	Level       int32
 	Description string
 }
 
 type Ticket struct {
-	ID          int32
-	Title       string
-	Status      string
-	Description string
-	SeverityID  int32
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
-	CompletedAt sql.NullTime
+	ID            int32
+	Title         string
+	Status        string
+	Description   string
+	SeverityID    int32
+	CategoryID    int32
+	SubcategoryID sql.NullInt32
+	CreatedAt     time.Time
+	UpdatedAt     time.Time
+	CompletedAt   sql.NullTime
 }

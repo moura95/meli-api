@@ -44,11 +44,16 @@ func (s *TicketService) GetByID(ctx context.Context, id int32) (*repository.Tick
 	return &ticket, nil
 }
 
-func (s *TicketService) Create(ctx context.Context, title, desc string, severityId int32) (*repository.Ticket, error) {
+func (s *TicketService) Create(ctx context.Context, title, desc string, severityId, categoryId, subCategoryId int32) (*repository.Ticket, error) {
 	arg := repository.CreateTicketParams{
 		Title:       title,
 		Description: desc,
 		SeverityID:  severityId,
+		CategoryID:  categoryId,
+		SubcategoryID: sql.NullInt32{
+			Int32: subCategoryId,
+			Valid: subCategoryId > 0,
+		},
 	}
 	ticket, err := s.repository.CreateTicket(ctx, arg)
 	if err != nil {
@@ -66,7 +71,7 @@ func (s *TicketService) Delete(ctx context.Context, id int32) error {
 	return nil
 }
 
-func (s *TicketService) Update(ctx context.Context, id, severityId int32, title, desc, status string) error {
+func (s *TicketService) Update(ctx context.Context, id, severityId, categoryId, subCategoryId int32, title, desc, status string) error {
 	arg := repository.UpdateTicketParams{
 		ID: id,
 		Title: sql.NullString{
@@ -85,10 +90,18 @@ func (s *TicketService) Update(ctx context.Context, id, severityId int32, title,
 			String: status,
 			Valid:  status != "",
 		},
+		CategoryID: sql.NullInt32{
+			Int32: categoryId,
+			Valid: categoryId > 0,
+		},
+		SubcategoryID: sql.NullInt32{
+			Int32: subCategoryId,
+			Valid: subCategoryId > 0,
+		},
 	}
 	err := s.repository.UpdateTicket(ctx, arg)
 	if err != nil {
-		return fmt.Errorf("failed to create %s", err.Error())
+		return fmt.Errorf("failed to update %s", err.Error())
 	}
 	return nil
 }
