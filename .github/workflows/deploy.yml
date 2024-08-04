@@ -32,6 +32,6 @@ jobs:
         uses: google-github-actions/deploy-cloudrun@main
         with:
           service: meli-api
-          image: gcr.io/southamerica-east1-docker.pkg.dev/moura-366701/meli-api
+          image: gcr.io/southamerica-east1-docker.pkg.dev/moura-366701/api
           project_id: moura-366701
           credentials: ${{ secrets.SERVICE_ACCOUNT_KEYS }}
