@@ -1,8 +1,7 @@
 module github/moura95/meli-api
 
-go 1.21
+go 1.22.3
 
-toolchain go1.22.3
 
 require (
 	github.com/axiaoxin-com/ratelimiter v1.0.3
