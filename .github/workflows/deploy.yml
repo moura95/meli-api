@@ -25,6 +25,11 @@ jobs:
           username: _json_key
           password: ${{ secrets.SERVICE_ACCOUNT_KEYS }}
 
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.SERVICE_ACCOUNT_KEYS }}
+
 
       - name: Build and Push Container
         run: |-
