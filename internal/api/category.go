@@ -194,7 +194,7 @@ func (t *CategoryRouter) hardDelete(ctx *gin.Context) {
 	err = t.service.Delete(ctx, int32(id))
 	if err != nil {
 		t.logger.Error(err)
-		ctx.JSON(http.StatusInternalServerError, ginx.ErrorResponse(errors.FailedToDelete("Category")))
+		ctx.JSON(http.StatusInternalServerError, ginx.ErrorResponse(err.Error()))
 		return
 	}
 

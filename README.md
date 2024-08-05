@@ -23,9 +23,23 @@ Aplicação CRUD para gerenciamento de tickets, com categorias e subcategorias, 
     * [Obter Ticket](#obter-ticket)
     * [Deletar Ticket](#deletar-ticket)
     * [Atualizar Ticket](#atualizar-ticket)
-6. [Autor](#autor)
+6. [Metricas de Negocio](#documentação-da-api-de-tickets)
+   * [Criar Ticket](#criar-ticket)
+7[Autor](#autor)
 
 
+## Tecnologias Utilizadas
+- Docker
+- Golang
+- Gin
+- Postgres
+- Sqlx
+- TestContainers
+- Testify
+- Zap logger
+- Viper
+- Swagger
+- Validator
 
 ## Requisitos
 - Docker
@@ -344,6 +358,28 @@ Atualiza um ticket específico pelo seu ID.
 }
 ```
 
+## Metricas de Negocio
+- Número de Tickets em Aberto
+
+- Total de tickets que ainda não foram resolvidos ou fechados.
+- Número de Tickets Críticos
+
+- Número de Tickets Finalizados
+
+- Total de tickets que foram resolvidos e fechados com sucesso.
+- Total de Tickets por Dia/Semana/Mês
+
+- Quantidade total de tickets criados em um dia, semana ou mês específico. Ajuda a entender a carga de trabalho e a demanda ao longo do tempo.
+- Tempo Médio de Resolução
+
+- Tempo médio necessário para resolver e fechar um ticket desde a sua abertura. Pode ser segmentado por categoria ou severidade.
+- Taxa de Resolução no Prazo
+
+- Número de Tickets por Categoria/Subcategoria
+
+
+- Percentual de tickets que foram reabertos após terem sido fechados, indicando possíveis problemas na resolução inicial.
+- Tempo Médio de Atendimento
 
 
 ## Autor
