@@ -53,7 +53,15 @@ Na tabela ticket temos o user_id simulando uma tabela de usuario integrando com 
 
 
 # Instalacao
+install Golang Migrate
 
+MacOS
+```bash 
+brew install golang-migrate
+````
+```bash
+apt install migrate
+```
 ### Clone Project
 ```bash
 git clone https://github.com/moura95/meli-api
