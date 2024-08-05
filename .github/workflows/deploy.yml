@@ -22,13 +22,13 @@ jobs:
           username: _json_key
           password: ${{ secrets.SERVICE_ACCOUNT_KEYS }}
 
-      - name: Push to Container Registry
+      - name: Push to Artifact Registry
         run: |-
           docker push gcr.io/moura-366701/meli-api
 
       - name: Deploy to Cloud Run
         id: deploy
-        uses: google-github-actions/deploy-cloudrun@main
+        uses: google-github-actions/deploy-cloudrun@v1
         with:
           service: meli-api
           image: gcr.io/moura-366701/meli-api
