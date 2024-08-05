@@ -7,7 +7,6 @@ import (
 
 	"github/moura95/meli-api/config"
 	"github/moura95/meli-api/internal/repository"
-	"github/moura95/meli-api/pkg/jsonplaceholder"
 	"go.uber.org/zap"
 )
 
@@ -27,10 +26,6 @@ func NewTicketService(repo repository.Querier, cfg config.Config, log *zap.Sugar
 
 func (s *TicketService) GetAll(ctx context.Context) ([]repository.Ticket, error) {
 	tickets, err := s.repository.ListTickets(ctx)
-	users, _ := jsonplaceholder.ListUsers()
-	user, _ := jsonplaceholder.GetUserByID(1)
-	fmt.Println(users)
-	fmt.Println(user)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get ticket %s", err.Error())
 	}

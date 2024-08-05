@@ -4,7 +4,10 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	swaggerfiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"github/moura95/meli-api/config"
+	"github/moura95/meli-api/docs"
 	"github/moura95/meli-api/internal/api"
 	"github/moura95/meli-api/internal/middleware"
 	"github/moura95/meli-api/internal/repository"
@@ -20,6 +23,16 @@ type Server struct {
 	logger *zap.SugaredLogger
 }
 
+//      @title                  Meli Api
+//      @version                1.0
+//      @description    Api Tickets
+//      @termsOfService http://swagger.io/terms/
+
+//      @license.name   Apache 2.0
+//      @license.url    http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host           localhost:8080
+// @BasePath       /api/v1
 func NewServer(cfg config.Config, store repository.Querier, log *zap.SugaredLogger) *Server {
 
 	server := &Server{
@@ -31,9 +44,14 @@ func NewServer(cfg config.Config, store repository.Querier, log *zap.SugaredLogg
 
 	router = gin.Default()
 
+	docs.SwaggerInfo.BasePath = ""
+
 	router.GET("/healthz", func(c *gin.Context) {
 		c.Status(http.StatusNoContent)
 	})
+
+	// Swagger
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
 	// Middleware Rate Limiter
 	router.Use(middleware.RateLimitMiddleware())
