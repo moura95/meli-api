@@ -57,7 +57,7 @@ Na tabela ticket temos o user_id simulando uma tabela de usuario integrando com 
 ### Clone Project
 ```bash
 git clone https://github.com/moura95/meli-api
-cd meli-challenge-api
+cd meli-api
 ```
 
 ##  Collection Postman
