@@ -45,7 +45,7 @@ type ticketResponse struct {
 	Status        string                `json:"status"`
 	SeverityId    int32                 `json:"severity_id"`
 	CategoryId    int32                 `json:"category_id"`
-	UserID        int32                 `json:"user_id"`
+	UserID        *int32                `json:"user_id"`
 	SubCategoryId *int32                `json:"subcategory_id"`
 	Category      *categoryResponse     `json:"category"`
 	SubCategory   *categoryResponse     `json:"subcategory"`
@@ -62,13 +62,20 @@ type listTicketResponse struct {
 	Status        string     `json:"status"`
 	SeverityId    int32      `json:"severity_id"`
 	CategoryId    int32      `json:"category_id"`
-	UserID        int32      `json:"user_id"`
+	UserID        *int32     `json:"user_id"`
 	SubCategoryId *int32     `json:"subcategory_id"`
 	CreatedAt     time.Time  `json:"created_at"`
 	UpdatedAt     time.Time  `json:"updated_at"`
 	CompletedAt   *time.Time `json:"completed_at"`
 }
 
+// @Summary List all Tickets
+// @Description Get a list of all tickets
+// @Tags tickets
+// @Accept json
+// @Produce json
+// @Success 200 {array} listTicketResponse
+// @Router /tickets [get]
 func (t *TicketRouter) list(c *gin.Context) {
 	t.logger.Info("List All Tickets")
 
@@ -88,16 +95,6 @@ func (t *TicketRouter) list(c *gin.Context) {
 
 	var response []listTicketResponse
 	for _, ticket := range tickets {
-		var completedAt *time.Time
-		if ticket.CompletedAt.Valid {
-			completedAt = &ticket.CompletedAt.Time
-		}
-
-		var subCategory *int32
-		if ticket.SubcategoryID.Valid {
-			subCategory = &ticket.SubcategoryID.Int32
-		}
-
 		response = append(response, listTicketResponse{
 			Id:            ticket.ID,
 			Title:         ticket.Title,
@@ -105,18 +102,26 @@ func (t *TicketRouter) list(c *gin.Context) {
 			Status:        ticket.Status,
 			SeverityId:    ticket.SeverityID,
 			CategoryId:    ticket.CategoryID,
-			UserID:        *util.NullInt32ToPtr(ticket.UserID),
-			SubCategoryId: subCategory,
+			UserID:        util.NullInt32ToPtr(ticket.UserID),
+			SubCategoryId: util.NullInt32ToPtr(ticket.SubcategoryID),
 			CreatedAt:     ticket.CreatedAt,
 			UpdatedAt:     ticket.UpdatedAt,
-			CompletedAt:   completedAt,
+			CompletedAt:   util.NullDateToPtr(ticket.CompletedAt),
 		})
 
 	}
 
-	c.JSON(http.StatusOK, ginx.SuccessResponseWithPageInfo(response, ginx.PageInfo{}))
+	c.JSON(http.StatusOK, ginx.SuccessResponse(response))
 }
 
+// @Summary Get a ticket by id
+// @Description Get details of a ticket by its ID
+// @Tags tickets
+// @Accept json
+// @Produce json
+// @Param id path int true "Ticket ID"
+// @Success 200 {object} ticketResponse
+// @Router /tickets/{id} [get]
 func (t *TicketRouter) get(ctx *gin.Context) {
 
 	t.logger.Info("Get By UUID Ticket")
@@ -144,6 +149,7 @@ func (t *TicketRouter) get(ctx *gin.Context) {
 		SeverityId:    ticket.SeverityID,
 		CategoryId:    ticket.CategoryID,
 		SubCategoryId: util.NullInt32ToPtr(ticket.SubcategoryID),
+		UserID:        util.NullInt32ToPtr(ticket.UserID),
 		CreatedAt:     ticket.CreatedAt,
 		UpdatedAt:     ticket.UpdatedAt,
 		CompletedAt:   util.NullDateToPtr(ticket.CompletedAt),
@@ -169,6 +175,15 @@ func (t *TicketRouter) get(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, ginx.SuccessResponse(response))
 }
 
+// @Summary Add a new Ticket
+// @Description Add a new ticket
+// @Tags tickets
+// @Accept json
+// @Produce json
+// @Param receiver body createTicketRequest true "Ticket"
+// @Success 201 {object} ticketResponse
+// @Failure 400 {object} object{error=string}
+// @Router /tickets [post]
 func (t *TicketRouter) create(ctx *gin.Context) {
 	var req createTicketRequest
 	t.logger.Info("Create Ticket")
@@ -202,6 +217,17 @@ func (t *TicketRouter) create(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, ginx.SuccessResponse(ticket))
 }
 
+// @Summary Update a ticket
+// @Description Update a ticket with the given ID
+// @Tags tickets
+// @Accept json
+// @Produce json
+// @Param id path string true "ID"
+// @Param receiver body updateTicketRequest true "Ticket"
+// @Success 204
+// @Failure 400 {object} object{error=string}
+// @Failure 404 {object} object{error=string}
+// @Router /tickets/{id} [patch]
 func (t *TicketRouter) update(ctx *gin.Context) {
 	var req updateTicketRequest
 
@@ -221,6 +247,19 @@ func (t *TicketRouter) update(ctx *gin.Context) {
 		return
 	}
 
+	user, err := jsonplaceholder.GetUserByID(req.UserID)
+	if err != nil {
+		t.logger.Error(err)
+		ctx.JSON(http.StatusBadRequest, ginx.ErrorResponse(err.Error()))
+		return
+	}
+
+	if user == nil {
+		t.logger.Info(user)
+		ctx.JSON(http.StatusNotFound, ginx.ErrorResponse("Not Found User"))
+		return
+	}
+
 	err = t.service.Update(ctx, int32(id), req.UserID, req.SeverityId, req.CategoryId, req.SubCategoryId, req.Title, req.Description, req.Status)
 	if err != nil {
 		t.logger.Error(err)
@@ -231,6 +270,15 @@ func (t *TicketRouter) update(ctx *gin.Context) {
 	ctx.JSON(http.StatusNoContent, ginx.SuccessResponse(""))
 }
 
+// @Summary delete a ticket by ID
+// @Description delete with the given ID
+// @Tags tickets
+// @Accept json
+// @Produce json
+// @Param id path int true "ID"
+// @Success 200
+// @Failure 404 {object} object{error=string}
+// @Router /tickets/{id} [delete]
 func (t *TicketRouter) hardDelete(ctx *gin.Context) {
 
 	t.logger.Info("Delete UUID Ticket")

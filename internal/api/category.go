@@ -27,6 +27,13 @@ type categoryResponse struct {
 	ParentId *int32 `json:"parent_id"`
 }
 
+// @Summary List all Categories
+// @Description Get a list of all categories
+// @Tags categories
+// @Accept json
+// @Produce json
+// @Success 200 {array} categoryResponse
+// @Router /categories [get]
 func (t *CategoryRouter) list(c *gin.Context) {
 	t.logger.Info("List All Categories")
 	parentIdStr := c.Query("parent_id")
@@ -46,9 +53,17 @@ func (t *CategoryRouter) list(c *gin.Context) {
 			ParentId: util.NullInt32ToPtr(cate.ParentID)})
 	}
 
-	c.JSON(http.StatusOK, ginx.SuccessResponseWithPageInfo(resp, ginx.PageInfo{}))
+	c.JSON(http.StatusOK, ginx.SuccessResponse(resp))
 }
 
+// @Summary Get a category by id
+// @Description Get details of a ticket by its ID
+// @Tags categories
+// @Accept json
+// @Produce json
+// @Param id path int true "ID"
+// @Success 200 {object} categoryResponse
+// @Router /categories/{id} [get]
 func (t *CategoryRouter) get(ctx *gin.Context) {
 
 	t.logger.Info("Get By UUID Category")
@@ -77,6 +92,15 @@ func (t *CategoryRouter) get(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, ginx.SuccessResponse(response))
 }
 
+// @Summary Add a new Category
+// @Description Add a new Category
+// @Tags categories
+// @Accept json
+// @Produce json
+// @Param receiver body createCategoryRequest true "Category"
+// @Success 201 {object} categoryResponse
+// @Failure 400 {object} object{error=string}
+// @Router /categories [post]
 func (t *CategoryRouter) create(ctx *gin.Context) {
 	var req createCategoryRequest
 	t.logger.Info("Create Category")
@@ -106,6 +130,17 @@ func (t *CategoryRouter) create(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, ginx.SuccessResponse(category))
 }
 
+// @Summary Update a category
+// @Description Update a category with the given ID
+// @Tags categories
+// @Accept json
+// @Produce json
+// @Param id path string true "ID"
+// @Param receiver body updateCategoryRequest true "Category"
+// @Success 204
+// @Failure 400 {object} object{error=string}
+// @Failure 404 {object} object{error=string}
+// @Router /categories/{id} [patch]
 func (t *CategoryRouter) update(ctx *gin.Context) {
 	var req updateCategoryRequest
 
@@ -135,6 +170,15 @@ func (t *CategoryRouter) update(ctx *gin.Context) {
 	ctx.JSON(http.StatusNoContent, ginx.SuccessResponse(""))
 }
 
+// @Summary delete a category by ID
+// @Description delete with the given ID
+// @Tags categories
+// @Accept json
+// @Produce json
+// @Param id path int true "ID"
+// @Success 200
+// @Failure 404 {object} object{error=string}
+// @Router /categories/{id} [delete]
 func (t *CategoryRouter) hardDelete(ctx *gin.Context) {
 
 	t.logger.Info("Delete UUID Category")
