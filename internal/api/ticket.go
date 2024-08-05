@@ -247,17 +247,19 @@ func (t *TicketRouter) update(ctx *gin.Context) {
 		return
 	}
 
-	user, err := jsonplaceholder.GetUserByID(req.UserID)
-	if err != nil {
-		t.logger.Error(err)
-		ctx.JSON(http.StatusBadRequest, ginx.ErrorResponse(err.Error()))
-		return
-	}
+	if req.UserID > 0 {
+		user, err := jsonplaceholder.GetUserByID(req.UserID)
+		if err != nil {
+			t.logger.Error(err)
+			ctx.JSON(http.StatusBadRequest, ginx.ErrorResponse(err.Error()))
+			return
+		}
 
-	if user == nil {
-		t.logger.Info(user)
-		ctx.JSON(http.StatusNotFound, ginx.ErrorResponse("Not Found User"))
-		return
+		if user == nil {
+			t.logger.Info(user)
+			ctx.JSON(http.StatusNotFound, ginx.ErrorResponse("Not Found User"))
+			return
+		}
 	}
 
 	err = t.service.Update(ctx, int32(id), req.UserID, req.SeverityId, req.CategoryId, req.SubCategoryId, req.Title, req.Description, req.Status)
