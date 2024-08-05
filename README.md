@@ -25,7 +25,7 @@ Aplicação CRUD para gerenciamento de tickets, com categorias e subcategorias, 
     * [Atualizar Ticket](#atualizar-ticket)
 6. [Metricas de Negocio](#documentação-da-api-de-tickets)
    * [Criar Ticket](#criar-ticket)
-7[Autor](#autor)
+7. [Autor](#autor)
 
 
 ## Tecnologias Utilizadas
