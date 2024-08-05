@@ -5,7 +5,7 @@ on:
       - main
       - feature/devops
 env:
-  PROJECT_ID: 366701
+  PROJECT_ID: moura/366701
   GAR_LOCATION: gcr.io
   SERVICE: meli-api
   REGION: southamerica-east1
