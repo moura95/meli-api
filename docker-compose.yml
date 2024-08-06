@@ -30,21 +30,5 @@ services:
     depends_on:
       psql:
         condition: service_healthy
-  api:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "4000:4000"
-    environment:
-      - DB_SOURCE=postgres://postgres:postgres@psql:5432/?sslmode=disable
-    depends_on:
-      psql:
-        condition: service_healthy
-    entrypoint:
-      [
-        "main"
-      ]
-    command: [ "main" ]
 volumes:
   db:

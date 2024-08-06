@@ -98,7 +98,7 @@ Iniciar Servico
 ```
 
 ## Rodar Com Docker
-Docker esta configurado para subir imagem do banco de dados, criar as tabelas e inserir registros, estou utilizando a imagem do golang-migrate para executar minhas migracoes, alem de subir a api da aplicacao.
+Docker esta configurado para subir imagem do banco de dados, criar as tabelas e inserir registros, estou utilizando a imagem do golang-migrate para executar minhas migracoes
 
 ```bash
 docker-compose up
