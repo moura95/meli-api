@@ -2,7 +2,7 @@ export const Footer = () => {
   return (
     <div className="flex flex-col gap-2 justify-center items-center p-6 bg-[#FFE600]">
       <p className="font-bold text-white text-1xl">Autor: Guilherme Moura</p>
-      <p className="font-bold text-white text-1xl">
+      <div className="font-bold text-white text-1xl">
         <div className="flex">
           <a
             href="https://www.linkedin.com/in/guilherme-moura95/"
@@ -28,7 +28,7 @@ export const Footer = () => {
             />
           </a>
         </div>
-      </p>
+      </div>
     </div>
   );
 };

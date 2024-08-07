@@ -23,6 +23,20 @@ interface Ticket {
 }
 
 export const List = () => {
+  const convertSeverity = (id: number) => {
+    switch (id) {
+      case 1:
+        return "Issue High";
+      case 2:
+        return "High";
+      case 3:
+        return "Medium";
+      case 4:
+        return "Low";
+      default:
+        return "N/A";
+    }
+  };
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const fetchTickets = async () => {
     try {
@@ -37,7 +51,7 @@ export const List = () => {
     fetchTickets();
   }, []);
 
-  const handlerUpdateStatusDone = async (id: any) => {
+  const handleUpdateStatusDone = async (id: any) => {
     try {
       await axios.patch(`http://127.0.0.1:8080/tickets/${id}`, {
         status: "DONE",
@@ -49,7 +63,7 @@ export const List = () => {
     }
   };
 
-  const handlerDeleteTicket = async (id: any) => {
+  const handleDeleteTicket = async (id: any) => {
     try {
       await axios.delete(`http://127.0.0.1:8080/tickets/${id}`);
 
@@ -105,7 +119,7 @@ export const List = () => {
                     <TableCell>{ticket.title}</TableCell>
                     <TableCell>{ticket.description}</TableCell>
                     <TableCell>{ticket.status}</TableCell>
-                    <TableCell>{ticket.severity_id}</TableCell>
+                    <TableCell>{convertSeverity(ticket.severity_id)}</TableCell>
                     <TableCell>{formatDate(ticket.created_at)}</TableCell>
                     <TableCell>
                       {formatDate(ticket.completed_at)}
@@ -113,7 +127,7 @@ export const List = () => {
                     <TableCell>
                       <Button
                         className="mr-2"
-                        onClick={() => handlerUpdateStatusDone(ticket.id)}
+                        onClick={() => handleUpdateStatusDone(ticket.id)}
                         variant="secondary"
                         size="ssm"
                       >
@@ -126,7 +140,7 @@ export const List = () => {
                         </Button>
                       </a>
                       <Button
-                        onClick={() => handlerDeleteTicket(ticket.id)}
+                        onClick={() => handleDeleteTicket(ticket.id)}
                         variant="destructive"
                         size="ssm"
                       >
