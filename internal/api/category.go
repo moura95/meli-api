@@ -14,16 +14,6 @@ import (
 	"go.uber.org/zap"
 )
 
-type createCategoryRequest struct {
-	Name     string `json:"name" validate:"required"`
-	ParentId int32  `json:"parent_id"`
-}
-
-type updateCategoryRequest struct {
-	Name     string `json:"name"`
-	ParentId int32  `json:"parent_id"`
-}
-
 type categoryResponse struct {
 	Id       *int32  `json:"id"`
 	Name     *string `json:"name"`
@@ -95,6 +85,11 @@ func (t *CategoryRouter) get(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, ginx.SuccessResponse(response))
 }
 
+type createCategoryRequest struct {
+	Name     string `json:"name" validate:"required"`
+	ParentId int32  `json:"parent_id"`
+}
+
 // @Summary Add a new Category
 // @Description Add a new Category
 // @Tags categories
@@ -131,6 +126,11 @@ func (t *CategoryRouter) create(ctx *gin.Context) {
 	category, _ := t.service.GetByID(ctx, ca.ID)
 
 	ctx.JSON(http.StatusCreated, ginx.SuccessResponse(category))
+}
+
+type updateCategoryRequest struct {
+	Name     string `json:"name"`
+	ParentId int32  `json:"parent_id"`
 }
 
 // @Summary Update a category
