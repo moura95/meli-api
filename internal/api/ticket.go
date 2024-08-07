@@ -12,32 +12,6 @@ import (
 	"github/moura95/meli-api/pkg/jsonplaceholder"
 )
 
-type listTicketRequest struct {
-	Status     string `form:"status"`
-	Title      string `form:"name"`
-	SeverityId int32  `form:"severity_id"`
-	Limit      int32  `form:"limit"`
-	Page       int32  `form:"page"`
-}
-
-type createTicketRequest struct {
-	Title         string `json:"title" validate:"required"`
-	Description   string `json:"description" validate:"required"`
-	SeverityId    int32  `json:"severity_id" validate:"gte=1,lte=4"`
-	CategoryId    int32  `json:"category_id" validate:"required"`
-	SubCategoryId int32  `json:"subcategory_id"`
-}
-
-type updateTicketRequest struct {
-	Title         string `json:"title"`
-	Description   string `json:"description"`
-	Status        string `json:"status"`
-	UserID        int32  `json:"user_id"`
-	SeverityId    int32  `json:"severity_id"`
-	CategoryId    int32  `json:"category_id"`
-	SubCategoryId int32  `json:"subcategory_id"`
-}
-
 type ticketResponse struct {
 	Id            int32                 `json:"id"`
 	Title         string                `json:"title"`
@@ -53,6 +27,14 @@ type ticketResponse struct {
 	CreatedAt     time.Time             `json:"created_at"`
 	UpdatedAt     time.Time             `json:"updated_at"`
 	CompletedAt   *time.Time            `json:"completed_at"`
+}
+
+type listTicketRequest struct {
+	Status     string `form:"status"`
+	Title      string `form:"name"`
+	SeverityId int32  `form:"severity_id"`
+	Limit      int32  `form:"limit"`
+	Page       int32  `form:"page"`
 }
 
 type listTicketResponse struct {
@@ -175,6 +157,14 @@ func (t *TicketRouter) get(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, ginx.SuccessResponse(response))
 }
 
+type createTicketRequest struct {
+	Title         string `json:"title" validate:"required"`
+	Description   string `json:"description" validate:"required"`
+	SeverityId    int32  `json:"severity_id" validate:"gte=1,lte=4"`
+	CategoryId    int32  `json:"category_id" validate:"required"`
+	SubCategoryId int32  `json:"subcategory_id"`
+}
+
 // @Summary Add a new Ticket
 // @Description Add a new ticket
 // @Tags tickets
@@ -215,6 +205,16 @@ func (t *TicketRouter) create(ctx *gin.Context) {
 	ticket, _ := t.service.GetByID(ctx, ti.ID)
 
 	ctx.JSON(http.StatusCreated, ginx.SuccessResponse(ticket))
+}
+
+type updateTicketRequest struct {
+	Title         string `json:"title"`
+	Description   string `json:"description"`
+	Status        string `json:"status"`
+	UserID        int32  `json:"user_id"`
+	SeverityId    int32  `json:"severity_id"`
+	CategoryId    int32  `json:"category_id"`
+	SubCategoryId int32  `json:"subcategory_id"`
 }
 
 // @Summary Update a ticket
