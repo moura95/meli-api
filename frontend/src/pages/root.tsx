@@ -1,5 +1,5 @@
-import { NavBar } from "@/components/navbar.tsx";
-import { Footer } from "@/components/footer.tsx";
+import { NavBar } from "../components/navbar.tsx";
+import { Footer } from "../components/footer.tsx";
 import { Outlet } from "react-router-dom";
 
 export const Root = () => {
