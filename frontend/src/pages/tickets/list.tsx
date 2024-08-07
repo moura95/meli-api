@@ -8,10 +8,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table.tsx";
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button.tsx";
 import { MdDeleteOutline, MdDone, MdOutlineRemoveRedEye } from "react-icons/md";
+import { axiosBackend } from "../../baseURL";
 interface Ticket {
   id: string;
   title: string;
@@ -40,7 +40,7 @@ export const List = () => {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const fetchTickets = async () => {
     try {
-      const res = await axios.get("http://127.0.0.1:8080/tickets");
+      const res = await axiosBackend.get(`/tickets`);
 
       setTickets(res.data.data);
     } catch (error) {
@@ -53,7 +53,7 @@ export const List = () => {
 
   const handleUpdateStatusDone = async (id: any) => {
     try {
-      await axios.patch(`http://127.0.0.1:8080/tickets/${id}`, {
+      await axiosBackend.patch(`/tickets/${id}`, {
         status: "DONE",
       });
 
@@ -65,7 +65,7 @@ export const List = () => {
 
   const handleDeleteTicket = async (id: any) => {
     try {
-      await axios.delete(`http://127.0.0.1:8080/tickets/${id}`);
+      await axiosBackend.delete(`/tickets/${id}`);
 
       fetchTickets();
     } catch (error) {

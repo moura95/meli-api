@@ -12,6 +12,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { MdDeleteOutline } from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
+import { axiosBackend } from "../../baseURL";
 
 export const Details = () => {
   const { id } = useParams<{ id: string }>();
@@ -35,7 +36,7 @@ export const Details = () => {
 
   async function deleteTicket() {
     try {
-      await axios.delete(`http://127.0.0.1:8080/tickets/${id}`);
+      await axiosBackend.delete(`/tickets/${id}`);
       navigator("/tickets");
     } catch (error) {
       console.error("Failed to delete ticket:", error);
@@ -44,7 +45,7 @@ export const Details = () => {
 
   async function getTicket() {
     try {
-      const res = await axios.get(`http://127.0.0.1:8080/tickets/${id}`);
+      const res = await axiosBackend.get(`/tickets/${id}`);
       setTicket(res.data.data);
       console.log(res.data.data);
     } catch (error) {
@@ -54,7 +55,7 @@ export const Details = () => {
 
   async function handleStatusChange(status: string) {
     try {
-      await axios.patch(`http://127.0.0.1:8080/tickets/${id}`, {
+      await axiosBackend.patch(`/tickets/${id}`, {
         status,
       });
     } catch (error) {
@@ -64,7 +65,7 @@ export const Details = () => {
 
   async function handleSeverityChange(severity_id: string) {
     try {
-      await axios.patch(`http://127.0.0.1:8080/tickets/${id}`, {
+      await axiosBackend.patch(`/tickets/${id}`, {
         severity_id: Number(severity_id),
       });
     } catch (error) {

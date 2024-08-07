@@ -7,24 +7,32 @@ import ErrorPage from "./error-page.tsx";
 import { Details } from "./pages/tickets/details.tsx";
 import { New } from "./pages/tickets/new.tsx";
 import { List } from "./pages/tickets/list.tsx";
+import App from "./App.tsx";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Root />,
+    element: <App />,
     errorElement: <ErrorPage />,
     children: [
       {
         path: "/tickets",
-        element: <List />,
-      },
-      {
-        path: "/tickets/:id",
-        element: <Details />,
-      },
-      {
-        path: "/tickets/new",
-        element: <New />,
+        element: <Root />,
+        errorElement: <ErrorPage />,
+        children: [
+          {
+            path: "/tickets/list",
+            element: <List />,
+          },
+          {
+            path: "/tickets/:id",
+            element: <Details />,
+          },
+          {
+            path: "/tickets/new",
+            element: <New />,
+          },
+        ],
       },
     ],
   },
