@@ -157,13 +157,13 @@ func (t *TicketRouter) get(ctx *gin.Context) {
 
 	// Add Category
 	response.Category = &categoryResponse{
-		Id:   ticket.CategoryID,
-		Name: ticket.CategoryName,
+		Id:   &ticket.CategoryID,
+		Name: &ticket.CategoryName,
 	}
 	// Add SubCategory
 	response.SubCategory = &categoryResponse{
-		Id:   *util.NullInt32ToPtr(ticket.SubcategoryID),
-		Name: *util.NullStringToPtr(ticket.SubcategoryName),
+		Id:   util.NullInt32ToPtr(ticket.SubcategoryID),
+		Name: util.NullStringToPtr(ticket.SubcategoryName),
 	}
 	// Add User
 	user, err := jsonplaceholder.GetUserByID(ticket.UserID.Int32)

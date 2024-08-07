@@ -22,9 +22,9 @@ type updateCategoryRequest struct {
 }
 
 type categoryResponse struct {
-	Id       int32  `json:"id"`
-	Name     string `json:"name"`
-	ParentId *int32 `json:"parent_id"`
+	Id       *int32  `json:"id"`
+	Name     *string `json:"name"`
+	ParentId *int32  `json:"parent_id"`
 }
 
 // @Summary List all Categories
@@ -48,8 +48,8 @@ func (t *CategoryRouter) list(c *gin.Context) {
 
 	for _, cate := range categories {
 		resp = append(resp, categoryResponse{
-			Id:       cate.ID,
-			Name:     cate.Name,
+			Id:       &cate.ID,
+			Name:     &cate.Name,
 			ParentId: util.NullInt32ToPtr(cate.ParentID)})
 	}
 
@@ -66,7 +66,7 @@ func (t *CategoryRouter) list(c *gin.Context) {
 // @Router /categories/{id} [get]
 func (t *CategoryRouter) get(ctx *gin.Context) {
 
-	t.logger.Info("Get By UUID Category")
+	t.logger.Info("Get By ID Category")
 
 	idStr := ctx.Param("id")
 	id, err := strconv.ParseInt(idStr, 10, 32)
@@ -85,8 +85,8 @@ func (t *CategoryRouter) get(ctx *gin.Context) {
 	}
 
 	response := categoryResponse{
-		Id:       category.ID,
-		Name:     category.Name,
+		Id:       &category.ID,
+		Name:     &category.Name,
 		ParentId: util.NullInt32ToPtr(category.ParentID)}
 
 	ctx.JSON(http.StatusOK, ginx.SuccessResponse(response))
