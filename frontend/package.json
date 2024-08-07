@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "start": "serve dist/",
+    "start": "serve -s dist",
     "build": "tsc -b && vite build",
     "lint": "eslint meli-front --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
