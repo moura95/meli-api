@@ -8,10 +8,10 @@ import {
 } from "@/components/ui/select.tsx";
 import { Category } from "@/lib/interfaces.ts";
 
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { SelectGroup, SelectLabel } from "../../components/ui/select";
+import { axiosBackend } from "../../baseURL";
 
 interface createTicket {
   title: string;
@@ -24,39 +24,27 @@ interface createTicket {
 export const New = () => {
   const navigate = useNavigate(); // Criar a instância do navigate
 
-  const handlerNewTicket = async (data: createTicket) => {
+  async function handleNewTicket() {
     try {
-      await axios.post(`http://127.0.0.1:8080/tickets`, data);
+      if (!title || !description || !categorySelected || !severitySelected) {
+        alert("Fill in all fields");
+        return;
+      }
 
-      navigate("/tickets");
+      const data: createTicket = {
+        title,
+        description,
+        category_id: Number(categorySelected),
+        subcategory_id: null,
+        severity_id: Number(severitySelected),
+      };
+
+      await axiosBackend.post(`/tickets`, data);
+      navigate("/tickets/list");
     } catch (error) {
       console.error("Failed to create ticket:", error);
     }
-  };
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (
-      categorySelected === null ||
-      severitySelected === null ||
-      !title ||
-      !description
-    ) {
-      console.error("All fields are required.");
-      return;
-    }
-
-    const data: createTicket = {
-      title,
-      description,
-      category_id: categorySelected,
-      subcategory_id: null,
-      severity_id: severitySelected,
-    };
-
-    handlerNewTicket(data);
-  };
+  }
 
   async function handleSeverityChange(severityId: string) {
     setSeveritySelected(Number(severityId));
@@ -69,7 +57,7 @@ export const New = () => {
 
   const listCategories = async () => {
     try {
-      const res = await axios.get(`http://127.0.0.1:8080/categories`);
+      const res = await axiosBackend.get(`/categories`);
       const data = res.data.data.map((category: any) => {
         return {
           id: category.id,
@@ -97,96 +85,83 @@ export const New = () => {
       <h2 className="flex text-2xl font-bold mb-4 justify-center text-gray-700">
         Create a new ticket
       </h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <div className="flex gap-6 flex-row bold mb-4 justify-between"></div>
 
-          <div className="flex flex-row justify-between mb-6 mt-6 ">
-            <label className="flex flex-row gap-2 text-gray-700 text-sm ">
-              <p className="font-bold">Category:</p>
-              <div className="flex flex-row  justify-between gap-2">
-                <Select
-                  onValueChange={handleCategoryChange}
-                  value={categorySelected}
-                >
-                  <SelectTrigger className="w-[200px]">
-                    <SelectValue placeholder="Select Category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectLabel>Category</SelectLabel>
-                      {categories.map((category: Category) => (
-                        <SelectItem
-                          value={category.id}
-                          selected={categorySelected === category.id}
-                        >
-                          {category.name}
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </div>
-            </label>
+      <div>
+        <div className="flex gap-6 flex-row bold mb-4 justify-between"></div>
 
-            <label className="flex flex-row gap-2  text-gray-700 text-sm ">
-              <p className="font-bold">Severity:</p>
-              <div className="flex flex-row  justify-between gap-2">
-                <Select onValueChange={handleSeverityChange}>
-                  <SelectTrigger className="w-[200px]">
-                    <SelectValue placeholder="Select Severity" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectLabel>Severity</SelectLabel>
-                      {/* <SelectItem value="1">Issue high</SelectItem> */}
-                      <SelectItem value="2">High</SelectItem>
-                      <SelectItem value="3">Medium</SelectItem>
-                      <SelectItem value="4">Low</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </div>
-            </label>
-          </div>
-        </div>
-
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">
-            Title
+        <div className="flex flex-row justify-between mb-6 mt-6 ">
+          <label className="flex flex-row gap-2 text-gray-700 text-sm ">
+            <p className="font-bold">Category:</p>
+            <div className="flex flex-row  justify-between gap-2">
+              <Select
+                onValueChange={handleCategoryChange}
+                value={categorySelected}
+              >
+                <SelectTrigger className="w-[200px]">
+                  <SelectValue placeholder="Select Category" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Category</SelectLabel>
+                    {categories.map((category: Category) => (
+                      <SelectItem
+                        value={category.id}
+                        selected={categorySelected === category.id}
+                      >
+                        {category.name}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
           </label>
-          <textarea
-            onChange={(e) => setTitle(e.target.value)}
-            className="shadow border rounded  py-2 px-3 w-[450px] text-gray-700 leading-tight"
-          />
-        </div>
 
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">
-            Description
+          <label className="flex flex-row gap-2  text-gray-700 text-sm ">
+            <p className="font-bold">Severity:</p>
+            <div className="flex flex-row  justify-between gap-2">
+              <Select onValueChange={handleSeverityChange}>
+                <SelectTrigger className="w-[200px]">
+                  <SelectValue placeholder="Select Severity" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Severity</SelectLabel>
+                    {/* <SelectItem value="1">Issue high</SelectItem> */}
+                    <SelectItem value="2">High</SelectItem>
+                    <SelectItem value="3">Medium</SelectItem>
+                    <SelectItem value="4">Low</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
           </label>
-          <textarea
-            onChange={(e) => setDescription(e.target.value)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight"
-          />
         </div>
+      </div>
 
-        <div>
-          <Button
-            onClick={() =>
-              handlerNewTicket({
-                title,
-                description,
-                category_id: Number(categorySelected),
-                subcategory_id: null,
-                severity_id: Number(severitySelected),
-              })
-            }
-          >
-            Create
-          </Button>
-        </div>
-      </form>
+      <div className="mb-4">
+        <label className="block text-gray-700 text-sm font-bold mb-2">
+          Title
+        </label>
+        <textarea
+          onChange={(e) => setTitle(e.target.value)}
+          className="shadow border rounded  py-2 px-3 w-[450px] text-gray-700 leading-tight"
+        />
+      </div>
+
+      <div className="mb-4">
+        <label className="block text-gray-700 text-sm font-bold mb-2">
+          Description
+        </label>
+        <textarea
+          onChange={(e) => setDescription(e.target.value)}
+          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight"
+        />
+      </div>
+
+      <div>
+        <Button onClick={handleNewTicket}>Create</Button>
+      </div>
     </div>
   );
 };
