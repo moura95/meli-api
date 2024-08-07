@@ -7,9 +7,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table.tsx";
+} from "../../components/ui/table.tsx";
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button.tsx";
+import { Button } from "../../components/ui/button.tsx";
 import { MdDeleteOutline, MdDone, MdOutlineRemoveRedEye } from "react-icons/md";
 import { axiosBackend } from "../../baseURL";
 interface Ticket {

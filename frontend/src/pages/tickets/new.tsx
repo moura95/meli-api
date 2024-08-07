@@ -1,12 +1,12 @@
-import { Button } from "@/components/ui/button.tsx";
+import { Button } from "../../components/ui/button.tsx";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select.tsx";
-import { Category } from "@/lib/interfaces.ts";
+} from "../../components/ui/select.tsx";
+import { Category } from "../../lib/interfaces.ts";
 
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -75,8 +75,8 @@ export const New = () => {
   }, []);
 
   const [categories, setCategories] = useState([]);
-  const [categorySelected, setCategorySelected] = useState();
-  const [severitySelected, setSeveritySelected] = useState();
+  const [categorySelected, setCategorySelected] = useState(0);
+  const [severitySelected, setSeveritySelected] = useState(0);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
@@ -95,7 +95,7 @@ export const New = () => {
             <div className="flex flex-row  justify-between gap-2">
               <Select
                 onValueChange={handleCategoryChange}
-                value={categorySelected}
+                value={categorySelected.toString()}
               >
                 <SelectTrigger className="w-[200px]">
                   <SelectValue placeholder="Select Category" />
@@ -105,8 +105,8 @@ export const New = () => {
                     <SelectLabel>Category</SelectLabel>
                     {categories.map((category: Category) => (
                       <SelectItem
-                        value={category.id}
-                        selected={categorySelected === category.id}
+                        value={category.id.toString()}
+                        // selected={categorySelected === category.id}
                       >
                         {category.name}
                       </SelectItem>
