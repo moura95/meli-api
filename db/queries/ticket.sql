@@ -17,7 +17,8 @@ WHERE tickets.id = $1;
 
 -- name: ListTickets :many
 SELECT *
-FROM tickets;
+FROM tickets
+order by id;
 
 -- name: UpdateTicket :exec
 UPDATE tickets

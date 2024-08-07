@@ -108,6 +108,7 @@ func (q *Queries) GetTicketById(ctx context.Context, id int32) (GetTicketByIdRow
 const listTickets = `-- name: ListTickets :many
 SELECT id, title, status, description, severity_id, category_id, subcategory_id, created_at, updated_at, completed_at, user_id
 FROM tickets
+order by id
 `
 
 func (q *Queries) ListTickets(ctx context.Context) ([]Ticket, error) {
