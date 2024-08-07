@@ -6,9 +6,12 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
+	"github/moura95/meli-api/internal/service"
 	"github/moura95/meli-api/internal/util"
 	"github/moura95/meli-api/pkg/errors"
 	"github/moura95/meli-api/pkg/ginx"
+	"go.uber.org/zap"
 )
 
 type createCategoryRequest struct {
@@ -199,4 +202,30 @@ func (t *CategoryRouter) hardDelete(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, ginx.SuccessResponse("Ok"))
+}
+
+type ICategory interface {
+	SetupCategoryRoute(routers *gin.RouterGroup)
+}
+
+type CategoryRouter struct {
+	service  service.CategoryService
+	logger   *zap.SugaredLogger
+	validate validator.Validate
+}
+
+func NewCategoryRouter(s service.CategoryService, log *zap.SugaredLogger) *CategoryRouter {
+	return &CategoryRouter{
+		service:  s,
+		logger:   log,
+		validate: *validator.New(),
+	}
+}
+
+func (t *CategoryRouter) SetupCategoryRoute(routers *gin.RouterGroup) {
+	routers.GET("/categories", t.list)
+	routers.GET("/categories/:id", t.get)
+	routers.DELETE("/categories/:id", t.hardDelete)
+	routers.POST("/categories", t.create)
+	routers.PATCH("/categories/:id", t.update)
 }
