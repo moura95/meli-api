@@ -41,6 +41,10 @@ jobs:
       - name: Deploy to Cloud Run
         id: deploy
         uses: google-github-actions/deploy-cloudrun@v2
+        env:
+          DB_SOURCE: ${{ secrets.DB_SOURCE }}
+          HTTP_SERVER_ADDRESS: 0.0.0.0:8080
+
         with:
           service: ${{ env.SERVICE }}
           region: ${{ env.REGION }}
