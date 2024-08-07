@@ -37,12 +37,12 @@ jobs:
           docker push "${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:${{ github.sha }}"
 
         # END - Docker auth and build
-
-      - name: Deploy to Cloud Run
-        id: deploy
-        uses: google-github-actions/deploy-cloudrun@v2
-        with:
-          service: ${{ env.SERVICE }}
-          region: ${{ env.REGION }}
-          image: ${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:latest
-          project_id: ${{ env.PROJECT_ID }}
+#
+#      - name: Deploy to Cloud Run
+#        id: deploy
+#        uses: google-github-actions/deploy-cloudrun@v2
+#        with:
+#          service: ${{ env.SERVICE }}
+#          region: ${{ env.REGION }}
+#          image: ${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:latest
+#          project_id: ${{ env.PROJECT_ID }}
