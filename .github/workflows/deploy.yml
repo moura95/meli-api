@@ -45,7 +45,6 @@ jobs:
         with:
           env_vars: |
             DB_SOURCE=${{ secrets.DB_SOURCE }}
-            PORT=8080
           service: ${{ env.SERVICE }}
           region: ${{ env.REGION }}
           image: ${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:latest
