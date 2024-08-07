@@ -8,7 +8,8 @@ Aplicação CRUD para gerenciamento de tickets, com categorias e subcategorias, 
 
 1. [Requisitos](#requisitos)
 2. [Database](#database)
-3. [Instalacao](#instalacao)
+3. [Front-end](#front-end)
+4. [Instalacao](#instalacao)
     * [Requsitos](#requisitos)
     * [Clone o projeto](#clone-project)
     * [Collection Postman](#collection-postman)
@@ -16,16 +17,16 @@ Aplicação CRUD para gerenciamento de tickets, com categorias e subcategorias, 
     * [Tests ](#tests)
     * [Rodar Aplicacao ](#rodar-aplicacao)
     * [Rodar Com Docker ](#rodar-com-docker)
-4. [Endpoints](#endpoints)
-5. [Referencia Api](#documentação-da-api-de-tickets)
+5. [Endpoints](#endpoints)
+6. [Referencia Api](#documentação-da-api-de-tickets)
     * [Criar Ticket](#criar-ticket)
     * [Listar Ticket](#listar-tickets)
     * [Obter Ticket](#obter-ticket)
     * [Deletar Ticket](#deletar-ticket)
     * [Atualizar Ticket](#atualizar-ticket)
-6. [Metricas de Negocio](#documentação-da-api-de-tickets)
+7. [Metricas de Negocio](#documentação-da-api-de-tickets)
    * [Criar Ticket](#criar-ticket)
-7. [Autor](#autor)
+8. [Autor](#autor)
 
 
 ## Tecnologias Utilizadas
@@ -47,6 +48,21 @@ Aplicação CRUD para gerenciamento de tickets, com categorias e subcategorias, 
 - Make
 - Golang Migrate
 
+## Front End
+![img](docs/front.png)
+
+## Running Front
+```bash 
+cd frontend
+````
+```bash 
+npm install 
+````
+
+```bash 
+npm run dev
+````
+
 ## Database:
 Na tabela ticket temos o user_id simulando uma tabela de usuario integrando com os usuarios do jsonplaceholder
 ![img](db/db_diagram.png)
@@ -59,6 +75,7 @@ MacOS
 ```bash 
 brew install golang-migrate
 ````
+
 ```bash
 apt install migrate
 ```
