@@ -11,6 +11,7 @@ import { Category } from "@/lib/interfaces.ts";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { SelectGroup, SelectLabel } from "../../components/ui/select";
 
 interface createTicket {
   title: string;
@@ -56,6 +57,16 @@ export const New = () => {
 
     handlerNewTicket(data);
   };
+
+  async function handleSeverityChange(severityId: string) {
+    setSeveritySelected(Number(severityId));
+  }
+
+  async function handleCategoryChange(categoryId: string) {
+    console.log(categoryId);
+    setCategorySelected(Number(categoryId));
+  }
+
   const listCategories = async () => {
     try {
       const res = await axios.get(`http://127.0.0.1:8080/categories`);
@@ -76,8 +87,8 @@ export const New = () => {
   }, []);
 
   const [categories, setCategories] = useState([]);
-  const [categorySelected, setCategorySelected] = useState("");
-  const [severitySelected, setSeveritySelected] = useState("");
+  const [categorySelected, setCategorySelected] = useState();
+  const [severitySelected, setSeveritySelected] = useState();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
@@ -94,16 +105,25 @@ export const New = () => {
             <label className="flex flex-row gap-2 text-gray-700 text-sm ">
               <p className="font-bold">Category:</p>
               <div className="flex flex-row  justify-between gap-2">
-                <Select onValueChange={(value) => setCategorySelected(value)}>
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Select" />
+                <Select
+                  onValueChange={handleCategoryChange}
+                  value={categorySelected}
+                >
+                  <SelectTrigger className="w-[200px]">
+                    <SelectValue placeholder="Select Category" />
                   </SelectTrigger>
                   <SelectContent>
-                    {categories.map((category: Category) => (
-                      <SelectItem value={category.id}>
-                        {category.name}
-                      </SelectItem>
-                    ))}
+                    <SelectGroup>
+                      <SelectLabel>Category</SelectLabel>
+                      {categories.map((category: Category) => (
+                        <SelectItem
+                          value={category.id}
+                          selected={categorySelected === category.id}
+                        >
+                          {category.name}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
                   </SelectContent>
                 </Select>
               </div>
@@ -112,14 +132,18 @@ export const New = () => {
             <label className="flex flex-row gap-2  text-gray-700 text-sm ">
               <p className="font-bold">Severity:</p>
               <div className="flex flex-row  justify-between gap-2">
-                <Select onValueChange={(value) => setSeveritySelected(value)}>
-                  <SelectTrigger defaultValue="4" className="w-[180px]">
-                    <SelectValue defaultValue="4" />
+                <Select onValueChange={handleSeverityChange}>
+                  <SelectTrigger className="w-[200px]">
+                    <SelectValue placeholder="Select Severity" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="4">Low</SelectItem>
-                    <SelectItem value="3">Medium</SelectItem>
-                    <SelectItem value="2">High</SelectItem>
+                    <SelectGroup>
+                      <SelectLabel>Severity</SelectLabel>
+                      {/* <SelectItem value="1">Issue high</SelectItem> */}
+                      <SelectItem value="2">High</SelectItem>
+                      <SelectItem value="3">Medium</SelectItem>
+                      <SelectItem value="4">Low</SelectItem>
+                    </SelectGroup>
                   </SelectContent>
                 </Select>
               </div>
