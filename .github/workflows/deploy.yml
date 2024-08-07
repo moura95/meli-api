@@ -41,11 +41,11 @@ jobs:
       - name: Deploy to Cloud Run
         id: deploy
         uses: google-github-actions/deploy-cloudrun@v2
-        env:
-          DB_SOURCE: ${{ secrets.DB_SOURCE }}
-          PORT: 8080
 
         with:
+          secrets: |-
+            DB_SOURCE=${{ secrets.DB_SOURCE }}
+            PORT= 8080
           service: ${{ env.SERVICE }}
           region: ${{ env.REGION }}
           image: ${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:latest
