@@ -27,14 +27,14 @@ type categoryResponse struct {
 // @Produce json
 // @Success 200 {array} categoryResponse
 // @Router /categories [get]
-func (t *CategoryRouter) list(c *gin.Context) {
+func (t *CategoryRouter) list(ctx *gin.Context) {
 	t.logger.Info("List All Categories")
-	parentIdStr := c.Query("parent_id")
+	parentIdStr := ctx.Query("parent_id")
 
-	categories, err := t.service.GetAll(c, parentIdStr)
+	categories, err := t.service.GetAll(ctx, parentIdStr)
 	if err != nil {
 		t.logger.Error(err)
-		c.JSON(http.StatusInternalServerError, ginx.ErrorResponse(errors.FailedToList("Categories")))
+		ctx.JSON(http.StatusInternalServerError, ginx.ErrorResponse(errors.FailedToList("Categories")))
 		return
 	}
 	var resp []categoryResponse
@@ -46,7 +46,7 @@ func (t *CategoryRouter) list(c *gin.Context) {
 			ParentId: util.NullInt32ToPtr(cate.ParentID)})
 	}
 
-	c.JSON(http.StatusOK, ginx.SuccessResponse(resp))
+	ctx.JSON(http.StatusOK, ginx.SuccessResponse(resp))
 }
 
 // @Summary Get a category by id
@@ -184,7 +184,7 @@ func (t *CategoryRouter) update(ctx *gin.Context) {
 // @Router /categories/{id} [delete]
 func (t *CategoryRouter) hardDelete(ctx *gin.Context) {
 
-	t.logger.Info("Delete UUID Category")
+	t.logger.Info("Delete ID Category")
 
 	idStr := ctx.Param("id")
 	id, err := strconv.ParseInt(idStr, 10, 32)

@@ -58,20 +58,20 @@ type listTicketResponse struct {
 // @Produce json
 // @Success 200 {array} listTicketResponse
 // @Router /tickets [get]
-func (t *TicketRouter) list(c *gin.Context) {
+func (t *TicketRouter) list(ctx *gin.Context) {
 	t.logger.Info("List All Tickets")
 
 	var filters listTicketRequest
-	err := ginx.ParseQuery(c, &filters)
+	err := ginx.ParseQuery(ctx, &filters)
 	if err != nil {
 		t.logger.Error(err)
-		c.JSON(http.StatusBadRequest, ginx.ErrorResponse(err.Error()))
+		ctx.JSON(http.StatusBadRequest, ginx.ErrorResponse(err.Error()))
 		return
 	}
-	tickets, err := t.service.GetAll(c)
+	tickets, err := t.service.GetAll(ctx)
 	if err != nil {
 		t.logger.Error(err)
-		c.JSON(http.StatusInternalServerError, ginx.ErrorResponse(errors.FailedToList("Tickets")))
+		ctx.JSON(http.StatusInternalServerError, ginx.ErrorResponse(errors.FailedToList("Tickets")))
 		return
 	}
 
@@ -93,7 +93,7 @@ func (t *TicketRouter) list(c *gin.Context) {
 
 	}
 
-	c.JSON(http.StatusOK, ginx.SuccessResponse(response))
+	ctx.JSON(http.StatusOK, ginx.SuccessResponse(response))
 }
 
 // @Summary Get a ticket by id
@@ -106,7 +106,7 @@ func (t *TicketRouter) list(c *gin.Context) {
 // @Router /tickets/{id} [get]
 func (t *TicketRouter) get(ctx *gin.Context) {
 
-	t.logger.Info("Get By UUID Ticket")
+	t.logger.Info("Get By ID Ticket")
 
 	idStr := ctx.Param("id")
 	id, err := strconv.ParseInt(idStr, 10, 32)
@@ -283,7 +283,7 @@ func (t *TicketRouter) update(ctx *gin.Context) {
 // @Router /tickets/{id} [delete]
 func (t *TicketRouter) hardDelete(ctx *gin.Context) {
 
-	t.logger.Info("Delete UUID Ticket")
+	t.logger.Info("Delete ID Ticket")
 
 	idStr := ctx.Param("id")
 	id, err := strconv.ParseInt(idStr, 10, 32)
