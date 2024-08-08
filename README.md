@@ -3,7 +3,8 @@
 ## Desc:
 Aplicação CRUD para gerenciamento de tickets, com categorias e subcategorias, severity e integracao com jsonplaceholder simulando tabela user
 
-
+## Demo
+https://hub-meli-front.4ddnns.easypanel.host/
 ## Tabela de Conteudo
 
 1. [Requisitos](#requisitos)
