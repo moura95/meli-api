@@ -12,10 +12,10 @@ migrate-create:
 
 
 down:
-	docker-compose down --volumes && docker volume prune -f
+	docker compose down --volumes && docker volume prune -f
 
 up:
-	docker-compose up -d
+	docker compose up -d
 	sleep 5
 	make migrate-up
 
